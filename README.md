@@ -1,7 +1,7 @@
 This is a information file- Justin
 So currently, I've made all the class and header files.
 
-This meeting will basically just be us filling in the information for the rest of the files. 
+The first meeting will basically just be us filling in the information for the rest of the files. 
 Later, when we can all get together, or over discord, we can decide who does what class.
 
 November 14th, get all the classes finished to be tested and debugged.
