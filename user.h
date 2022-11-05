@@ -27,7 +27,7 @@ public:
 
     void display(User &user); //displays user attributes
 
-    bool checkAdmin(User user);//checks if the user is an admin
+    bool checkAdmin(User &user);//checks if the user is an admin
 
 };
 
