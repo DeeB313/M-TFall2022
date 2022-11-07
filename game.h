@@ -17,9 +17,9 @@ private:
 
 public:   
 
-    Game();
+    Game() : name(""), genre(""), developer(""), publisher(""), release(""), rating(0) {}
 
-    Game(string name, string genre, string developer, string publisher, string release, int rating); //This creates a default game object
+    Game(string name, string genre, string developer, string publisher, string release, int rating) : name(name), genre(genre), developer(developer), publisher(publisher), release(release), rating(rating) {} //This creates a default game object
 
     void setGame(string &name, string &genre, string &developer, string &publisher, string &release, int &rating); //Sets game data
 
