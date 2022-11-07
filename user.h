@@ -19,7 +19,7 @@ public:
 
     User();
 
-    User(string username, string password, string email, string address, int paytype); //default constructor
+    User(string username, string password, string email, string address, int storeToken); //default constructor
 
     void updateinfo(string username); //lets the user update their information
 
