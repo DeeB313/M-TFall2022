@@ -16,7 +16,7 @@ User::User(string username, string password, string email, string address, int s
   this->address = address;
 }
 
-void User::updateinfo(User &user)
+void User::updateinfo()
 {
     string answer, username, password, newpassword, address, email;
     int money;
@@ -31,16 +31,16 @@ void User::updateinfo(User &user)
         std::cout << "Add funds" << std::endl;
         std::cout << "Exit" << std::endl;
 
-        std::cin >> answer;
+        std::getline(std::cin,answer);
 
-        if(answer == "Username" && answer == "username")
+        if(answer == "Username" || answer == "username")
         {
             std::cout << "Enter new username: " << std::endl;
             std::cin >> username;
             this->username = username;
         }
 
-        if(answer == "Password" && answer == "password")
+        if(answer == "Password" || answer == "password")
         {
             int flag = 0;
             std::cout << "Please enter your old password: " << std::endl;
@@ -115,27 +115,34 @@ void User::updateinfo(User &user)
             }
         }
 
-        if(answer == "Address" && answer == "address")
+        if(answer == "Address" || answer == "address")
         {
             std::cout << "Enter new address: " << std::endl;
+            std::cin.ignore();
             std::getline(std::cin,address);
             this->address = address;
-            std::cin.ignore();
+
         }
 
-        if(answer == "Email" && answer == "email")
+        if(answer == "Email" || answer == "email")
         {
             std::cout << "Enter new email: " << std::endl;
             std::cin >> email;
             this->email = email;
         }
 
-        if(answer == "Add funds" && answer == "add funds")
+        if(answer == "Add funds" || answer == "add funds")
         {
             std::cout << "How much fund?" << std::endl;
             std::cin >> money;
             storeToken = money;;
         }
+
+        if(answer == "Exit" || answer == "exit")
+        {
+                break;
+        }
+
         if(answer != "Username" && answer != "username" && answer != "Password" && answer != "password" && answer != "Address" && answer != "address" && answer != "Email" && answer != "email" && answer != "Exit" && answer != "Add funds" && answer != "add funds" && answer != "exit")
         {
             std::cout << "Error 404" << std::endl;
