@@ -21,7 +21,7 @@ public:
 
     User(string username, string password, string email, string address, int paytype); //default constructor
 
-    void updateinfo(User &user); //lets the user update their information
+    void updateinfo(); //lets the user update their information
 
     void createUser(User &user); //sets all the user attributes, provided there is input
 
