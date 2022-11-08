@@ -6,3 +6,10 @@ Later, when we can all get together, or over discord, we can decide who does wha
 
 November 14th, get all the classes finished to be tested and debugged.
 I would prefer to be able to debug as I make my code, so if you guys can push commits every 2-3 days that'll be great - Justin
+
+
+11/7/22-Justin
+So I've pretty much finished the user class, now we just need the other three to be done.
+things to note (for me mainly, and anyone else interested to test):
+The storetoken needs to have a flag for when the user doesn't enter a number.
+Usernames are unique, so we need to check for that somewhere, probably in the main function.
