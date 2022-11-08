@@ -1,6 +1,9 @@
 #include "user.h"
 #include <iostream>
-
+#include <sstream>
+using std::istream;
+using std::stringstream;
+using std::string;
 User::User()
 {
 
@@ -9,21 +12,26 @@ User::User()
 
 User::User(string username, string password, string email, string address, int storeToken) //default constructor
 {
-  this->username = username;
-  this->password = password;
-  this->email = email;
-  this->storeToken = storeToken;
-  this->address = address;
+    //creates a default user
+    this->username = username;
+    this->password = password;
+    this->email = email;
+    this->storeToken = storeToken;
+    this->address = address;
 }
 
 void User::updateinfo()
 {
-    string answer, username, password, newpassword, address, email;
+    //initial values
+    string answer, username, password, newpassword, address, email, temptoken;
     int money;
+
     std::cout << "What do you want to update?" << std::endl;
 
+    //menu loop
     while(1)
     {
+        //menu
         std::cout << "Username" << std::endl;
         std::cout << "Password" << std::endl;
         std::cout << "Address" << std::endl;
@@ -31,8 +39,10 @@ void User::updateinfo()
         std::cout << "Add funds" << std::endl;
         std::cout << "Exit" << std::endl;
 
+        //takes user input
         std::getline(std::cin,answer);
 
+        //changes username
         if(answer == "Username" || answer == "username")
         {
             std::cout << "Enter new username: " << std::endl;
@@ -40,23 +50,35 @@ void User::updateinfo()
             this->username = username;
         }
 
+        //changes password
         if(answer == "Password" || answer == "password")
         {
+            //sets a flag
             int flag = 0;
+
+            //the user will need to enter their old password
             std::cout << "Please enter your old password: " << std::endl;
+
+            //input loop, the user will have 3 attempts to enter their old password
             while(1)
             {
+                //takes input for old password
                 std::cin >> password;
+
+                //if input matches, break the loop
                 if(this->password == password)
                 {
                     break;
                 }
 
+                //if the input doesn't match, subtracts an attempt and iterates flag
                 if(this->password != password)
                 {
                     flag +=1;
                     std::cout << "Password incorrect. You have " << 3-flag << " attempts remaining." << std::endl;
                 }
+
+                //if attempts have run out, ends the program
                 if(flag == 3)
                 {
                     std::cout << "Attempts maxed out. Exiting..." << std::endl;
@@ -64,26 +86,59 @@ void User::updateinfo()
                 }
             }
 
+            //if flag equals 3, then the user has maxed out their password attempts and will not be allowed to change their password
             if(flag ==3)
             {
                 break;
             }
 
+            //else prompts the user to create a new password
             else
             {
-                std::cout << "Please enter new password: " << std::endl;
-                std::cin >> newpassword;
-                string temp = newpassword;
-                std::cout << "Please reenter new password: " << std::endl;
+                //sets a flag
+                int flag = 0;
+
+                //input loop
                 while(1)
                 {
-                    int flag = 0;
+                    //takes input for new password
+                    std::cout << "Please enter new password: " << std::endl;
                     std::cin >> newpassword;
-                    if(flag == 1)
+
+
+
+                    //if the new password is the same as the old password, tells the user and loops
+                    if(newpassword == password)
+                    {
+                        std::cout << "That's the same password!" << std::endl;
+                        continue;
+                    }
+
+                    //breaks if passwords don't match
+                    else
                     {
                         break;
                     }
+                }
 
+                //sets temp equal to new password
+                string temp = newpassword;
+
+                //input loop
+                while(1)
+                {
+                    //if the flag is 1, then exits out of update password
+                    if(flag == 1)
+                    {
+                        std::cout << "User decided to not change password." << std::endl;
+                        break;
+                    }
+
+                    //prompts the user to reenter their new password
+                    std::cout << "Please reenter new password: " << std::endl;
+                    std::cin >> newpassword;
+
+                    //if the password matches, sets the new password as password and exits update
                     if(newpassword == temp)
                     {
                         password = newpassword;
@@ -91,20 +146,24 @@ void User::updateinfo()
                         break;
                     }
 
+                    //if the passwords don't match, then asks the user if they want to try again or give up
                     else
                     {
                         string choice;
                         std::cout << "Password does not match! Try again? (Yes/No)" << std::endl;
                         while(1)
                         {
+                            //takes input for choice
                             std::cin >> choice;
 
-                            if(choice == "Yes" && choice == "yes")
+                            //if yes, breaks the loop
+                            if(choice == "Yes" || choice == "yes")
                             {
                                 break;
                             }
 
-                            if(choice == "No" && choice == "no")
+                            //if no, updates flag and breaks the loop
+                            if(choice == "No" || choice == "no")
                             {
                                 flag += 1;
                                 break;
@@ -115,15 +174,16 @@ void User::updateinfo()
             }
         }
 
+        //sets new address
         if(answer == "Address" || answer == "address")
         {
             std::cout << "Enter new address: " << std::endl;
             std::cin.ignore();
             std::getline(std::cin,address);
             this->address = address;
-
         }
 
+        //sets new email
         if(answer == "Email" || answer == "email")
         {
             std::cout << "Enter new email: " << std::endl;
@@ -131,63 +191,157 @@ void User::updateinfo()
             this->email = email;
         }
 
+        //gives more money
         if(answer == "Add funds" || answer == "add funds")
         {
-            std::cout << "How much fund?" << std::endl;
-            std::cin >> money;
-            storeToken = money;;
+            //input loop
+            while(1)
+            {
+                //sets a flag
+                int flag = 0;
+                
+                //initializes a stringstream
+                stringstream ss;
+                std::cout << "How much money do you want to add? ";
+                //stores user string input into temptoken
+                std::cin >> temptoken;
+                //stores temptoken into stringstream
+                ss.str(temptoken);
+
+                //for loop, checks each character in temptoken to see if it is an integer
+                for(int i = 0; i <temptoken.length(); i++)
+                {
+                    //checks for integer
+                    bool check = isdigit(temptoken[i]);
+
+                    //if true, iterates flag and keeps looping
+                    if(check == true)
+                    {
+                        flag+=1;
+                    }
+
+                    //if false, flag becomes some negative number and breaks the loop
+                    if(check == false)
+                    {
+                        std::cout << "THAT'S NOT A NUMBER" << std::endl;
+                        flag -= 1000000000;
+                        break;
+                    }
+                }
+
+                //stores what the stringstream stores into money
+                ss>>money;
+                
+                //if flag is positive, then that means the user entered a number, breaks the loop
+                if(flag > 0)
+                {
+                    break;
+                }
+            }
+
+            //adds the extra money into the user account 
+            storeToken += money;
         }
 
+        //exits the update menu
         if(answer == "Exit" || answer == "exit")
         {
-                break;
+            break;
         }
 
+        //if the user enters a wrong input
         if(answer != "Username" && answer != "username" && answer != "Password" && answer != "password" && answer != "Address" && answer != "address" && answer != "Email" && answer != "email" && answer != "Exit" && answer != "Add funds" && answer != "add funds" && answer != "exit")
         {
             std::cout << "Error 404" << std::endl;
         }
     }
-
-
-
-
 }
 
+//creates a new user, takes input for everything
 void User::createUser(User &user)
 {
-  string username, password, email, address;
-  int storeToken;
+    //initial values
+    string username, password, email, address, temptoken;
+    int storeToken;
 
-  std::cout << "Please enter a username: ";
-  std::cin >> username;
-  this->username = username;
+    //sets username
+    std::cout << "Please enter a username: ";
+    std::cin >> username;
+    this->username = username;
 
-  std::cout << "Please enter a password: ";
-  std::cin >> password;
-  this->password = password;
+    //sets password
+    std::cout << "Please enter a password: ";
+    std::cin >> password;
+    this->password = password;
 
-  std::cout << "Please enter your email: ";
-  std::cin >> email;
-  this->email = email;
+    //sets email
+    std::cout << "Please enter your email: ";
+    std::cin >> email;
+    this->email = email;
 
-  std::cout << "Please enter your address: ";
-  std::cin.ignore();
-  std::getline(std::cin, address);
-  this->address = address;
+    //sets address
+    std::cout << "Please enter your address: ";
+    std::cin.ignore();
+    std::getline(std::cin, address);
+    this->address = address;
 
 
-  std::cout << "How much money do you have, rounded down: ";
-  std::cin >> storeToken;
-  this->storeToken = storeToken;
+    //input loop
+    while(1)
+    {
+        //sets a flag
+        int flag = 0;
+        
+        //initializes a stringstream
+        stringstream ss;
+        std::cout << "How much money do you have, rounded down: ";
+        //stores user string input into temptoken
+        std::cin >> temptoken;
+        //stores temptoken into stringstream
+        ss.str(temptoken);
 
-  if(username == "Justin")
-  {
-    admin = true;
-  }
+        //for loop, checks each character in temptoken to see if it is an integer
+        for(int i = 0; i <temptoken.length(); i++)
+        {
+            //checks for integer
+            bool check = isdigit(temptoken[i]);
 
+            //if true, iterates flag and keeps looping
+            if(check == true)
+            {
+                flag+=1;
+            }
+
+            //if false, flag becomes some negative number and breaks the loop
+            if(check == false)
+            {
+                std::cout << "THAT'S NOT A NUMBER" << std::endl;
+                flag -= 1000000000;
+                break;
+            }
+        }
+
+        //stores what the stringstream stores into storeToken
+        ss>>storeToken;
+        
+        //if flag is positive, then that means the user entered a number, breaks the loop
+        if(flag > 0)
+        {
+            break;
+        }
+    }
+
+    //sets funds
+    this->storeToken = storeToken;
+
+    //if the user has a specific username, then that means they are an admin
+    if(username == "Justin")
+    {
+        admin = true;
+    }
 }
 
+//displays user info, except password
 void User::display()
 {
     std::cout << "User Profile: " << std::endl;
@@ -196,6 +350,8 @@ void User::display()
     std::cout << "Shipping address: " << address << std::endl;
     std::cout << "Money: " << storeToken << std::endl;
 }
+
+//checks if the user is an admin, returns true if they are, false if they aren't
 bool User::checkAdmin(User &user)
 {
     if(admin == true)
