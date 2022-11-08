@@ -1,6 +1,4 @@
 #include "user.h"
-#include <iostream>
-using std::cout;
 
 User::User()
 {
