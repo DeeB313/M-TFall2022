@@ -8,24 +8,26 @@ class Game
 private:
 
     //initial values for a game
-    string name = "N/a";
-    string genre = "N/a";
-    string developer = "N/a";
-    string publisher = "N/a";
-    string release = "N/a";
-    int rating = 0;
+    string name, genre, developer, publisher, release;
+    int rating;
 
-public:   
+public:
 
-    Game() : name(""), genre(""), developer(""), publisher(""), release(""), rating(0) {}
+    //empty constructor
+    Game() : name("N/a"), genre("N/a"), developer("N/a"), publisher("N/a"), release("N/a"), rating(0) {}
 
+    //defined constructor
     Game(string name, string genre, string developer, string publisher, string release, int rating) : name(name), genre(genre), developer(developer), publisher(publisher), release(release), rating(rating) {} //This creates a default game object
 
-    void setGame(string &name, string &genre, string &developer, string &publisher, string &release, int &rating); //Sets game data
 
-    void display(Game &game); //displays game data
+    //sets variables of game
+    void setGame(string name, string genre, string developer, string publisher, string release, int rating); //Sets game data
 
-    void editGame(Game &game); //Allows the user to edit game data
+    //displays game data
+    void display(); //displays game data
+
+    //edits game information
+    void editGame(); //Allows the user to edit game data
 };
 
 #endif // GAME_H
