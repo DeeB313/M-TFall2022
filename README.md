@@ -13,3 +13,7 @@ So I've pretty much finished the user class, now we just need the other three to
 things to note (for me mainly, and anyone else interested to test):
 The storetoken needs to have a flag for when the user doesn't enter a number.
 Usernames are unique, so we need to check for that somewhere, probably in the main function.
+
+11/20/22-Justin
+I did some work on the main cpp, so far creating a user works fine. Login with an existent user still is not functional. 
+File writing works well enough. File reading does not work yet.
