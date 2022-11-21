@@ -1,6 +1,7 @@
 #include "user.h"
 #include <iostream>
 #include <sstream>
+#include <fstream>
 using std::istream;
 using std::stringstream;
 using std::string;
@@ -8,7 +9,6 @@ User::User()
 {
 
 }
-
 
 User::User(string username, string password, string email, string address, int storeToken) //default constructor
 {
@@ -20,6 +20,15 @@ User::User(string username, string password, string email, string address, int s
     this->address = address;
 }
 
+void User::setUser(string username, string password, string email, string address, int storeToken) //used by file managing
+{
+    //sets a user
+    this->username = username;
+    this->password = password;
+    this->email = email;
+    this->storeToken = storeToken;
+    this->address = address;
+}
 void User::updateinfo()
 {
     //initial values
@@ -199,7 +208,7 @@ void User::updateinfo()
             {
                 //sets a flag
                 int flag = 0;
-                
+
                 //initializes a stringstream
                 stringstream ss;
                 std::cout << "How much money do you want to add? ";
@@ -231,7 +240,7 @@ void User::updateinfo()
 
                 //stores what the stringstream stores into money
                 ss>>money;
-                
+
                 //if flag is positive, then that means the user entered a number, breaks the loop
                 if(flag > 0)
                 {
@@ -239,7 +248,7 @@ void User::updateinfo()
                 }
             }
 
-            //adds the extra money into the user account 
+            //adds the extra money into the user account
             storeToken += money;
         }
 
@@ -258,15 +267,13 @@ void User::updateinfo()
 }
 
 //creates a new user, takes input for everything
-void User::createUser(User &user)
+void User::createUser(string &username)
 {
     //initial values
-    string username, password, email, address, temptoken;
+    string password, email, address, temptoken;
     int storeToken;
 
     //sets username
-    std::cout << "Please enter a username: ";
-    std::cin >> username;
     this->username = username;
 
     //sets password
@@ -291,7 +298,7 @@ void User::createUser(User &user)
     {
         //sets a flag
         int flag = 0;
-        
+
         //initializes a stringstream
         stringstream ss;
         std::cout << "How much money do you have, rounded down: ";
@@ -315,7 +322,7 @@ void User::createUser(User &user)
             //if false, flag becomes some negative number and breaks the loop
             if(check == false)
             {
-                std::cout << "THAT'S NOT A NUMBER" << std::endl;
+                std::cout << "..." << std::endl;
                 flag -= 1000000000;
                 break;
             }
@@ -323,7 +330,7 @@ void User::createUser(User &user)
 
         //stores what the stringstream stores into storeToken
         ss>>storeToken;
-        
+
         //if flag is positive, then that means the user entered a number, breaks the loop
         if(flag > 0)
         {
@@ -335,7 +342,7 @@ void User::createUser(User &user)
     this->storeToken = storeToken;
 
     //if the user has a specific username, then that means they are an admin
-    if(username == "Justin")
+    if(username == "Justin" || username == "Marc" || username == "Dee" || username == "Brian")
     {
         admin = true;
     }
@@ -352,9 +359,9 @@ void User::display()
 }
 
 //checks if the user is an admin, returns true if they are, false if they aren't
-bool User::checkAdmin(User &user)
+bool User::checkAdmin()
 {
-    if(admin == true)
+    if(this->admin == true)
     {
         return true;
     }
