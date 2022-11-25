@@ -9,13 +9,11 @@
 using namespace std;
 
 //work in progress, but the idea is to load files in the beginning using load, and save whenever we change anything using save
-void loadData(vector<User> users); //, vector <Cart> carts, Inventory inventory
-void saveData();
+void loadData(vector<User> &users); //, vector <Cart> carts, Inventory inventory
+void saveData(vector<User> &users);
 
 int main()
 {
-    //loadData();
-
     //choice
     string choice;
 
@@ -35,6 +33,8 @@ int main()
     //the current user
     User user;
 
+
+    //loads data, if no data returns and continues
     loadData(users);
 
     cout << "Welcome to the Store!" << endl;
@@ -86,6 +86,7 @@ int main()
                         if(choice == "edit")
                         {
                             user.updateinfo();
+                            saveData(users);
                         }
 
                         //view history
@@ -106,7 +107,7 @@ int main()
                 //exit
                 if(choice == "exit")
                 {
-                    saveData();
+                    saveData(users);
                     loginFlag -= 1;
                     break;
                 }
@@ -155,6 +156,7 @@ int main()
                     }
                     //makes a new user
                     User newuser;
+
                     newuser.createUser(username);
                     users.push_back(newuser);
 
@@ -162,12 +164,9 @@ int main()
                     user = users.back();
                     cout << user.username << " has logged in." << endl;
 
-                    //updates user file
-                    ofstream outfile;
-                    //appends user data
-                    outfile.open("users.txt", ios::app);
-                    //everything but admin is appended
-                    outfile << endl << users.back().username << " " << users.back().password << " " << users.back().email << " " << users.back().address << " " << users.back().storeToken;
+                    //saves data to file
+                    saveData(users);
+
                     //updates loginFlag and goes to log in menu
                     loginFlag += 1;
                     break;
@@ -183,16 +182,26 @@ int main()
         }
         if(choice == "exit")
         {
-            saveData();
+            saveData(users);
             break;
         }
 
         if(choice == "3")
         {
+            if(!users.empty())
+            {
+                cout << " you have stuff";
+            }
+            else
+            {
+                cout << "you have nothing";
+            }
             for(int i = 0; i < users.size(); i++)
             {
                 users[i].display();
+                cout << endl;
             }
+
         }
 
         else
@@ -205,35 +214,67 @@ int main()
 
 
 //work in progress
-void loadData(vector<User> users)
+void loadData(vector<User> &users)
 {
     //initializing things to be read from file
-    string username, password, email, address;
-    int storeToken;
+    string username, password, email, address, storeToken;
+
+    //infile
     ifstream infile;
 
-    //opens users file
+    //opens users.txt
     infile.open("users.txt");
-
+    
+    //if file doesn't exist, ends the load
+    if(!infile.is_open())
+    {
+        infile.close();
+        return;
+    }
 
     //initializing User object
     User temp;
 
     //loop to set users in the file
-    while(infile >> username >> password >> email >> address >> storeToken)
+    while(getline(infile, username), getline(infile, password), getline(infile, email), getline(infile, address), getline(infile, storeToken))
     {
+        //converts the string input into an int
+        int tempToken = stoi(storeToken);
+        
         //sets User
-        temp.setUser(username, password, email, address, storeToken);
+        temp.setUser(username, password, email, address, tempToken);
 
         //adds User object to users vector
         users.push_back(temp);
     }
 
+    //closes file
     infile.close();
+    
+    
+    //insert other file loading here
 }
 
 //work in progress
-void saveData()
+void saveData(vector<User> &users)
 {
-    cout << "yay" << endl;
+    //outfile
+    ofstream outfile;
+    
+    //opens or creates users.txt in write mode
+    outfile.open("users.txt");
+
+    //loops and writes the user information into the file
+    for(int i = 0; i < users.size(); i++)
+    {
+        //writes the user data into users.txt
+        outfile << users[i].username << std::endl;
+        outfile << users[i].password << std::endl;
+        outfile << users[i].email << std::endl;
+        outfile << users[i].address << std::endl;
+        outfile << users[i].storeToken << std::endl;
+    }
+    
+    //closes the file
+    outfile.close();
 }
