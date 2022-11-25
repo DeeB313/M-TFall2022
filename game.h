@@ -28,6 +28,8 @@ public:
 
     //edits game information
     void editGame(); //Allows the user to edit game data
+    
+    void fileGame(string filename); //Edits game instance with file contents
 };
 
 #endif // GAME_H
