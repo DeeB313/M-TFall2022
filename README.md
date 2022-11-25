@@ -17,3 +17,9 @@ Usernames are unique, so we need to check for that somewhere, probably in the ma
 11/20/22-Justin
 I did some work on the main cpp, so far creating a user works fine. Login with an existent user still is not functional. 
 File writing works well enough. File reading does not work yet.
+
+11/25/22-Justin
+User file handling is done, the rest of the code still needs to be implemented. As for the games file handling, we would have to arbitrarily decide on using multiple
+files per game or a single file for all the games. Personally, I think using a single file would make file handling a lot easier. If that's the case all we have to do
+is move Marc's code into the save and load functions in main. If we are to use multiple files per game, then we will have to decide on a set number of games
+or create a separate file storing the list of all the .txts to be read from.
