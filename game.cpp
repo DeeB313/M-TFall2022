@@ -1,10 +1,31 @@
 #include "game.h"
+#include <fstream>
 using std::cout;
 using std::cin;
 using std::endl;
+using std::ifstream;
+using std::ofstream;
 
 void Game::setGame(string name, string genre, string developer, string publisher, string release, int rating)
 {
+
+    ofstream outfile;
+    outfile.open(name);
+
+    if (!outfile.is_open())
+    {
+        cout << "Error creating/opening file." << endl;
+        return;
+    }
+    outfile << name << endl;
+    outfile << genre << endl;
+    outfile << developer << endl;
+    outfile << publisher << endl;
+    outfile << release << endl;
+    outfile << rating << endl;
+
+    outfile.close()
+    
     //sets variable in Game to argument
     this->name = name;
     this->genre = genre;
@@ -71,4 +92,29 @@ void Game::editGame()
         }
         option = "";
     }
+}
+void Game::fileGame(string filename)
+{
+    ifstream infile;
+    string nam2, gen2, dev2, pub2, rel2;
+    int rat2;
+
+    infile.open(filename);
+
+    if (!infile.is_open())
+    {
+        cout << "That file does not exist" << endl;
+        return;
+    }
+    getline(infile, nam2);
+    getline(infile, gen2);
+    getline(infile, dev2);
+    getline(infile, pub2);
+    getline(infile, rel2);
+    infile >> rat2;
+
+    infile.close();
+
+    setGame(nam2, gen2, dev2, pub2, rel2, rat2);
+
 }
