@@ -18,9 +18,10 @@ User::User(string username, string password, string email, string address, int s
     this->email = email;
     this->storeToken = storeToken;
     this->address = address;
+    this->admin = false;
 }
 
-void User::setUser(string username, string password, string email, string address, int storeToken) //used by file managing
+void User::setUser(string &username, string &password, string &email, string &address, int &storeToken) //used by file managing
 {
     //sets a user
     this->username = username;
@@ -28,8 +29,20 @@ void User::setUser(string username, string password, string email, string addres
     this->email = email;
     this->storeToken = storeToken;
     this->address = address;
+
+    //if the user has a specific username, then that means they are an admin
+    if(username == "Justin" || username == "Marc" || username == "Dee" || username == "Brian")
+    {
+        this->admin = true;
+    }
+    else
+    {
+        this->admin = false;
+    }
 }
-void User::updateinfo()
+
+
+void User::updateinfo() //updates information
 {
     //initial values
     string answer, username, password, newpassword, address, email, temptoken;
@@ -371,4 +384,5 @@ bool User::checkAdmin()
         return false;
     }
 }
+
 
