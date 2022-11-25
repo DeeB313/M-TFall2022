@@ -12,7 +12,6 @@ protected:
     bool admin = false; //always initially set to false, can be changed later
 
 public:
-    std::vector<User> users;
     //initial values for username and password, usernames are unique; passwords are not
     string username = "";
     string password = "";
@@ -25,7 +24,7 @@ public:
 
     User(string username, string password, string email, string address, int storeToken); //default constructor
 
-    void setUser(string username, string password, string email, string address, int storeToken); // sets user, only used by file managing
+    void setUser(string &username, string &password, string &email, string &address, int &storeToken); // sets user, only used by file managing
 
     void updateinfo(); //lets the user update their information
 
