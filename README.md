@@ -23,3 +23,7 @@ User file handling is done, the rest of the code still needs to be implemented. 
 files per game or a single file for all the games. Personally, I think using a single file would make file handling a lot easier. If that's the case all we have to do
 is move Marc's code into the save and load functions in main. If we are to use multiple files per game, then we will have to decide on a set number of games
 or create a separate file storing the list of all the .txts to be read from.
+
+
+11/27/2022 - Dee
+Just uploaded the cart class. The login, logout, displayCart, and removeItem functions are working now. I need the inventory class to finish up the remaining functions so right now i'm waiting on the inventory class to finish to add the final 2 functions. 
