@@ -20,6 +20,7 @@ int main()
     //list for the carts and users
     vector<User> users;
     vector<Cart> carts;
+    vector<Game> games;
     
     //the inventory
     Inventory inventory;
@@ -33,6 +34,8 @@ int main()
 
     //the current user
     User user;
+    
+    
 
 
     //loads data, if no data returns and continues
@@ -50,6 +53,10 @@ int main()
                 cout << "View Inventory" << endl;
                 cout << "View Cart" << endl;
                 cout << "View Account" << endl;
+                if(user.username == "Justin" || user.username == "Marc" || user.username == "Dee" || user.username == "Brian")
+                {
+                    cout << "Game Management" << endl;
+                }
                 cout << "Exit" << endl;
                 cout << ">> ";
 
@@ -106,6 +113,70 @@ int main()
                         }
                     }
 
+                }
+                
+                if(user.username == "Justin" || user.username == "Marc" || user.username == "Dee" || user.username == "Brian")
+                {
+                    if(choice == "game")
+                    {
+                        while(1)                   
+                        {
+                            cout << "Create Game" << endl;
+                            cout << "Edit Game" << endl;
+                            cout << ">> " << endl;
+                            
+                            cin >> choice;
+                            if(choice == "create")
+                            {
+                                Game game;
+                                string name, genre, developer, publisher, release, temprat;
+                                int rating;
+                                cout << "Name: " << endl;
+                                getline(cin,name);
+                                cout << "Genre: " << endl;
+                                getline(cin, genre);
+                                cout << "Developer: " << endl;
+                                getline(cin, developer);
+                                cout << "Publisher: " << endl;
+                                getline(cin, publisher);
+                                cout << "Release: " << endl;
+                                getline(cin, release);
+                                cout << "Rating: " << endl;
+                                getline(cin, temprat);
+                                rating = stoi(temprat);
+                                game.setGame(name, genre, developer, publisher, release, rating);
+                                games.push_back(game);
+                                
+                            }
+                            if(choice == "edit")
+                            {
+                                int flag = 0;
+                                string name;
+                                cout << "What game do you want to edit?";
+                                cin >> name;
+                                for(int i = 0; i < games.size(); i++)
+                                {
+                                    if(name == games[i].name)
+                                    {
+                                        games[i].editGame();
+                                        cout << "Game edited. Please completely exit and reload the program for changes to take effect." << endl;
+                                        flag += 1000000;
+                                    }
+                                }
+                                
+                                if(flag < 0)
+                                {
+                                    cout << "Game not found." << endl;
+                                }
+                            }
+                            
+                            if(choice == "exit")
+                            {
+                                saveData(users, inventory);
+                                break;
+                            }
+                        }
+                    }
                 }
 
                 //exit
@@ -169,7 +240,7 @@ int main()
                     cout << user.username << " has logged in." << endl;
 
                     //saves data to file
-                    saveData(users);
+                    saveData(users, inventory);
 
                     //updates loginFlag and goes to log in menu
                     loginFlag += 1;
@@ -186,7 +257,7 @@ int main()
         }
         if(choice == "exit")
         {
-            saveData(users);
+            saveData(users, inventory);
             break;
         }
 
@@ -218,8 +289,9 @@ int main()
 
 
 //work in progress
-void loadData(vector<User> &users)
+void loadData(vector<User> &users, Inventory &inventory)
 {
+    int flag = 1;
     //initializing things to be read from file
     string username, password, email, address, storeToken;
 
@@ -229,34 +301,67 @@ void loadData(vector<User> &users)
     //opens users.txt
     infile.open("users.txt");
 
-    //if file doesn't exist, ends the load
+    //if file doesn't open, then the user section does not run
     if(!infile.is_open())
     {
+        //closes the file
         infile.close();
-        return;
+        //decrements flag so the user file section doesn't run
+        flag -= 1;
     }
-
-    //initializing User object
-    User temp;
-
-    //loop to set users in the file
-    while(getline(infile, username), getline(infile, password), getline(infile, email), getline(infile, address), getline(infile, storeToken))
+    
+    //runs if the users file is opened
+    if(flag == 1)
     {
-        //converts the string input into an int
-        int tempToken = stoi(storeToken);
-
-        //sets User
-        temp.setUser(username, password, email, address, tempToken);
-
-        //adds User object to users vector
-        users.push_back(temp);
+        //initializing User object
+        User temp;
+        //loop to set users in the file
+        while(getline(infile, username), getline(infile, password), getline(infile, email), getline(infile, address), getline(infile, storeToken))
+        {
+            //converts the string input into an int
+            int tempToken = stoi(storeToken);
+    
+            //sets User
+            temp.setUser(username, password, email, address, tempToken);
+    
+            //adds User object to users vector
+            users.push_back(temp);
+        }
+    
+        //closes file
+        infile.close();
     }
+    
+    /*
+    insert cart stuff here
+    */
+    
+    
+    //new initializers for inventory file
+    string name, tempquant;
 
-    //closes file
-    infile.close();
-
-
-    //insert other file loading here
+    infile.open("inventory.txt");
+    
+    //if the file doesn't open, then the inventory section will not run
+    if(!infile.is_open())
+    {
+        //closes the file
+        infile.close();
+        //decrements flag so the user file section doesn't run
+        flag -= 1;
+    }
+    
+    //runs if the inventory file opens
+    if(flag == 1)
+    {
+        while(getline(infile, name), getline(infile, tempquant))
+        {
+            //converts the string input into an int
+            int quantity = stoi(tempquant);
+            
+            inventory.addItem(name, quantity);
+        }
+    }
 }
 
 //work in progress
