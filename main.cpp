@@ -9,20 +9,21 @@
 using namespace std;
 
 //work in progress, but the idea is to load files in the beginning using load, and save whenever we change anything using save
-void loadData(vector<User> &users); //, vector <Cart> carts, Inventory inventory
-void saveData(vector<User> &users);
+void loadData(vector<User> &users, Inventory &inventory); //, vector <Cart> carts, Inventory inventory
+void saveData(vector<User> &users, Inventory &inventory);
 
 int main()
 {
     //choice
     string choice;
 
-    //list for the carts and users, might combine into a single vector later, but right now its fine
+    //list for the carts and users
     vector<User> users;
     vector<Cart> carts;
-
-    //inventory
+    
+    //the inventory
     Inventory inventory;
+
 
     //flag for login
     int loginFlag = 0;
@@ -35,7 +36,7 @@ int main()
 
 
     //loads data, if no data returns and continues
-    loadData(users);
+    loadData(users, inventory);
 
     cout << "Welcome to the Store!" << endl;
     while(1)
@@ -58,6 +59,9 @@ int main()
                 //inventory options
                 if(choice == "inventory")
                 {
+                    if (user.username == "Justin" || user.username == "Marc" || user.username == "Dee" || user.username == "Brian")
+                    {
+                    }
 
                 }
 
@@ -86,7 +90,7 @@ int main()
                         if(choice == "edit")
                         {
                             user.updateinfo();
-                            saveData(users);
+                            saveData(users, inventory);
                         }
 
                         //view history
@@ -107,7 +111,7 @@ int main()
                 //exit
                 if(choice == "exit")
                 {
-                    saveData(users);
+                    saveData(users, inventory);
                     loginFlag -= 1;
                     break;
                 }
@@ -224,7 +228,7 @@ void loadData(vector<User> &users)
 
     //opens users.txt
     infile.open("users.txt");
-    
+
     //if file doesn't exist, ends the load
     if(!infile.is_open())
     {
@@ -240,7 +244,7 @@ void loadData(vector<User> &users)
     {
         //converts the string input into an int
         int tempToken = stoi(storeToken);
-        
+
         //sets User
         temp.setUser(username, password, email, address, tempToken);
 
@@ -250,17 +254,17 @@ void loadData(vector<User> &users)
 
     //closes file
     infile.close();
-    
-    
+
+
     //insert other file loading here
 }
 
 //work in progress
-void saveData(vector<User> &users)
+void saveData(vector<User> &users, Inventory &inventory)
 {
     //outfile
     ofstream outfile;
-    
+
     //opens or creates users.txt in write mode
     outfile.open("users.txt");
 
@@ -274,7 +278,9 @@ void saveData(vector<User> &users)
         outfile << users[i].address << std::endl;
         outfile << users[i].storeToken << std::endl;
     }
-    
+
     //closes the file
     outfile.close();
+    
+    inventory.save();
 }
