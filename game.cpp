@@ -1,5 +1,6 @@
 #include "game.h"
 #include <fstream>
+#include <iostream>
 using std::cout;
 using std::cin;
 using std::endl;
@@ -10,7 +11,8 @@ void Game::setGame(string name, string genre, string developer, string publisher
 {
 
     ofstream outfile;
-    outfile.open(name);
+    string filename = name += ".txt";
+    outfile.open(filename);
 
     if (!outfile.is_open())
     {
@@ -24,7 +26,7 @@ void Game::setGame(string name, string genre, string developer, string publisher
     outfile << release << endl;
     outfile << rating << endl;
 
-    outfile.close()
+    outfile.close();
     
     //sets variable in Game to argument
     this->name = name;
@@ -96,7 +98,7 @@ void Game::editGame()
 void Game::fileGame(string filename)
 {
     ifstream infile;
-    string nam2, gen2, dev2, pub2, rel2;
+    string nam2, gen2, dev2, pub2, rel2, temprat2;
     int rat2;
 
     infile.open(filename);
@@ -111,7 +113,9 @@ void Game::fileGame(string filename)
     getline(infile, dev2);
     getline(infile, pub2);
     getline(infile, rel2);
-    infile >> rat2;
+    getline(infile, temprat2);
+    
+    rat2 = stoi(temprat2);
 
     infile.close();
 
