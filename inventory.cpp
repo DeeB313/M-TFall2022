@@ -6,6 +6,8 @@ using std::ofstream;
 
 Inventory::Inventory()
 {
+    head = nullptr;
+    tail = nullptr;
 
 }
 
@@ -55,7 +57,7 @@ void Inventory::checkAvailable(string &item) //Checks if an item is available in
         //goes to the next node
         temp = temp->next;
     }
-    
+
     //if item wasn't found or if the quantity was 0, return false
     std::cout << "This item is not available." << std::endl;
 }
@@ -63,16 +65,16 @@ void Inventory::checkAvailable(string &item) //Checks if an item is available in
 void Inventory::addItem(string &name, int &amount) //Adds an item to the inventory
 {
     //this code chunk creates the game object
-    Game game;
+    Game addgame;
     //filename
-    string filename = name += ".txt";
-    
+    string filename = "";
+
     //creates the game using fileGame
-    game.fileGame(filename);
-    
+    addgame.fileGame(name + ".txt");
+
     //creates new node with the inserted character as data
     Node *item = new Node;
-    item->game = game;
+    item->game = addgame;
 
     //sets temp equal to head
     Node *temp = head;
@@ -80,59 +82,59 @@ void Inventory::addItem(string &name, int &amount) //Adds an item to the invento
     //if head is empty, sets head to added Character, next and prev to null, and tail equal to head
     if(head == nullptr)
     {
-        item->quantity += amount;
         head = item;
         head->next = nullptr;
         head->prev = nullptr;
         tail = head;
-        
+        head->quantity += amount;
+
         //sets price
         if(item->game.developer == "Ubisoft")
         {
-            item->price = 50;
+            head->price = 50;
         }
-        
-        if(item->game.developer == "Activision")
+
+        else if(item->game.developer == "Activision")
         {
-            item->price = 60;
+            head->price = 60;
         }
-        
-        if(item->game.developer == "Bungie")
+
+        else if(item->game.developer == "Bungie")
         {
-            item->price = 25;
+            head->price = 25;
         }
-        
-        if(item->game.developer == "Nintendo")
+
+        else if(item->game.developer == "Nintendo")
         {
-            item->price = 35;
+            head->price = 35;
         }
-        
-        if(item->game.developer == "Square Enix")
+
+        else if(item->game.developer == "Square Enix")
         {
-            item->price = 40;
+            head->price = 40;
         }
-        
-        if(item->game.developer == "Capcom")
+
+        else if(item->game.developer == "Capcom")
         {
-            item->price = 55;
+            head->price = 55;
         }
-        
-        if(item->game.developer == "Fromsoftware")
+
+        else if(item->game.developer == "Fromsoftware")
         {
-            item->price = 60;
+            head->price = 60;
         }
-        
-        if(item->game.developer == "Sony")
+
+        else if(item->game.developer == "Sony")
         {
-            item->price = 60;
+            head->price = 60;
         }
-        
+
         //static price of 25 for "unknown" developers
         else
         {
-            item->price = 25;
+            head->price = 25;
         }
-        
+
         return;
     }
 
@@ -143,7 +145,7 @@ void Inventory::addItem(string &name, int &amount) //Adds an item to the invento
         //sets Game class insert and current equal to addedCharacter and temp
         Game insert = item->game;
         Game current = temp->game;
-        
+
         //if the added item is earlier in the alphabet than temp
         if(insert.name < current.name)
         {
@@ -204,48 +206,48 @@ void Inventory::addItem(string &name, int &amount) //Adds an item to the invento
         //goes to the next node
         temp = temp->next;
     }
-    
+
     //sets price
     if(item->game.developer == "Ubisoft")
     {
         item->price = 50;
     }
-    
-    if(item->game.developer == "Activision")
+
+    else if(item->game.developer == "Activision")
     {
         item->price = 60;
     }
-    
-    if(item->game.developer == "Bungie")
+
+    else if(item->game.developer == "Bungie")
     {
         item->price = 25;
     }
-    
-    if(item->game.developer == "Nintendo")
+
+    else if(item->game.developer == "Nintendo")
     {
         item->price = 35;
     }
-    
-    if(item->game.developer == "Square Enix")
+
+    else if(item->game.developer == "Square Enix")
     {
         item->price = 40;
     }
-    
-    if(item->game.developer == "Capcom")
+
+    else if(item->game.developer == "Capcom")
     {
         item->price = 55;
     }
-    
-    if(item->game.developer == "Fromsoftware")
+
+    else if(item->game.developer == "Fromsoftware")
     {
         item->price = 60;
     }
-    
-    if(item->game.developer == "Sony")
+
+    else if(item->game.developer == "Sony")
     {
         item->price = 60;
     }
-    
+
     //static price of 25 for "unknown" developers
     else
     {
@@ -307,7 +309,7 @@ void Inventory::display(Inventory &inventory)//Displays all the items in the inv
         //displays information
         temp->game.display();
         std::cout << std::endl;
-        
+
         //if the item is out of stock, outputs that, else output how much is left
         if(temp->quantity == 0)
         {
@@ -317,7 +319,7 @@ void Inventory::display(Inventory &inventory)//Displays all the items in the inv
         {
             std::cout << "Quantity left: " << temp->quantity << std::endl;
         }
-        std::cout << "Price: " << temp->price << std::endl;
+        std::cout << "Price: " << temp->price << std::endl << std::endl;
         temp = temp->next;
     }
 }
@@ -328,17 +330,17 @@ void Inventory::save()
     ofstream outfile;
     outfile.open("inventory.txt");
     string name, amount;
-    
+
     //sets temp equal to head
     Node *temp = head;
-    
+
     //if inventory hasn't been made, output that it's empty
     if(head == nullptr)
     {
         std::cout << "Inventory is empty." << std::endl;
         return;
     }
-    
+
     //loops and writes the game name and quantity into inventory.txt
     while(temp != nullptr)
     {
