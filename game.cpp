@@ -9,9 +9,9 @@ using std::ofstream;
 
 void Game::setGame(string name, string genre, string developer, string publisher, string release, int rating)
 {
-
     ofstream outfile;
-    string filename = name += ".txt";
+    string filename = "";
+    filename += name + ".txt";
     outfile.open(filename);
 
     if (!outfile.is_open())
@@ -27,7 +27,7 @@ void Game::setGame(string name, string genre, string developer, string publisher
     outfile << rating << endl;
 
     outfile.close();
-    
+
     //sets variable in Game to argument
     this->name = name;
     this->genre = genre;
@@ -114,7 +114,7 @@ void Game::fileGame(string filename)
     getline(infile, pub2);
     getline(infile, rel2);
     getline(infile, temprat2);
-    
+
     rat2 = stoi(temprat2);
 
     infile.close();
