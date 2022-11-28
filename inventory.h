@@ -1,41 +1,45 @@
 #ifndef INVENTORY_H
 #define INVENTORY_H
-#include <string>
-using namespace std;
+#include "game.h"
 
-class inventory
+//possibly do this with some sort of list, like linked list/array/vector
+
+//possible doubly linked list implementation
+struct Node
+{
+    //these will store our individual game information
+    int quantity = 0; //initial quantity is always 0
+    int itemID = -1; //itemID should only be positive, so when changing it make sure to make it a positive number
+    int price = 0; //price starts at 0
+    Game game;
+
+    Node *next;
+    Node *prev;
+};
+
+class Inventory
 {
 private:
-
-	//admin
-	bool admin = false;
+    Node *head;
+    Node *tail;
 
 public:
 
-	//initial values for inventory data
-	string item = "";
-	double price = 0;
-	int quantity = 0;
-	int itemID = 0;
 
-	inventory();
-	//constructor
-	inventory(string item, double price, int quantity, int itemID);
 
-	//adds item to file
-	void addItem();
+    Inventory();
+    ~Inventory();
 
-	//removes item from file
-	//void removeItem();
 
-	//checks for item in file
-	void checkAvailable();
+    void checkAvailable(string &item); //Checks if an item is available in the inventory(if there is more than one item of that name)
 
-	//displays the file content
-	void display();
+    void addItem(string &name, int &amount); //Adds an item to the inventory
 
-	//checks to see if the user is an admin
-	bool checkAdmin();
+    bool removeItem(string &item, int &amount); //Removes item from the inventory
+
+    void display(Inventory &inventory); //Displays all the items in the inventory
+    void save();
+
 };
 
-#endif
+#endif // INVENTORY_H
