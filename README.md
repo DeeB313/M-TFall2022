@@ -30,3 +30,5 @@ Just uploaded the cart class. The login, logout, displayCart, and removeItem fun
 
 11/28/2022 - Justin
 So the inventory class is now done, changes had to be made so that it works with the rest of the functions. The main function still needs menuing, but most of the things in it should be functional. I think really all we have left to do is for Dee to finish up the Cart class and to implement a history file for each user/cart. Other than that I think we're pretty much done. I'll will be doing some debugging for the inventory code.
+11/28/2022 - Justin
+Update, almost everything is finished, just the cart management needs to be done now. Everything should be taken care of in the main. The only notable problem is that the program crashes if you try to add a game file that doesn't exist. This can probably be resolved using a try/catch.
