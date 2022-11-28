@@ -7,11 +7,12 @@ class Game
 {
 private:
 
+    
+
+public:
     //initial values for a game
     string name, genre, developer, publisher, release;
     int rating;
-
-public:
 
     //empty constructor
     Game() : name("N/a"), genre("N/a"), developer("N/a"), publisher("N/a"), release("N/a"), rating(0) {}
