@@ -27,3 +27,6 @@ or create a separate file storing the list of all the .txts to be read from.
 
 11/27/2022 - Dee
 Just uploaded the cart class. The login, logout, displayCart, and removeItem functions are working now. I need the inventory class to finish up the remaining functions so right now i'm waiting on the inventory class to finish to add the final 2 functions. 
+
+11/28/2022 - Justin
+So the inventory class is now done, changes had to be made so that it works with the rest of the functions. The main function still needs menuing, but most of the things in it should be functional. I think really all we have left to do is for Dee to finish up the Cart class and to implement a history file for each user/cart. Other than that I think we're pretty much done. I'll will be doing some debugging for the inventory code.
