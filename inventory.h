@@ -9,7 +9,6 @@ struct Node
 {
     //these will store our individual game information
     int quantity = 0; //initial quantity is always 0
-    int itemID = -1; //itemID should only be positive, so when changing it make sure to make it a positive number
     int price = 0; //price starts at 0
     Game game;
 
