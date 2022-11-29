@@ -145,6 +145,8 @@ void Cart::addItem(Inventory inventory, string& item, int quantity)
 
 					ofstream test("dummy.txt", std::ios_base::out | std::ios_base::trunc);
 					test.close();
+					
+					inventory.removeItem(item, num);
 				}
 			}
 			if (line1 == "" || b1 != item)
