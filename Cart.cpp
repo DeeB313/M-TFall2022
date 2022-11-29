@@ -1,5 +1,7 @@
 #include "Cart.h"
 #include "User.h"
+#include "Inventory.h"
+#include "game.h"
 #include "Tokenizer.h"
 #include <iostream>
 using std::istream;
@@ -14,10 +16,35 @@ Cart::Cart()
 	quantity = 0;
 }
 
-void Cart::login(User *user) //login
+inline bool Cart::exist(const std::string& name) ///
+{
+	ifstream file(name);
+	if (!file)            // If the file was not found, then file is 0, i.e. !file=1 or true.
+		return false;    // The file was not found.
+	else                 // If the file was found, then file is non-0.
+		return true;     // The file was found.
+}
+
+void Cart::createCart() ///
+{
+	string cartname = username + ".txt";
+	ofstream file1;
+	if (exist(cartname) == true)
+	{
+		cout << "Cart history for user " << username << " exists" << endl;
+	}
+	else
+	{
+		file1.open(cartname);
+		cout << "Cart history does not exist. New cart created." << endl;
+	}
+}
+
+void Cart::login(User* user) ///
 {
 	bool ex = true;
 	string username, password;
+
 
 	while (ex)
 	{
@@ -34,6 +61,7 @@ void Cart::login(User *user) //login
 			if (user->password == this->password)
 			{
 				cout << "logged in" << endl;
+				createCart();
 				ex = false;
 			}
 			else
@@ -48,7 +76,7 @@ void Cart::login(User *user) //login
 
 	}
 }
-void Cart::logout()
+void Cart::logout() ///
 {
 	string confirm;
 
@@ -64,14 +92,27 @@ void Cart::logout()
 void Cart::checkout(Cart& cart)
 {
 
+	logout();
 }//checks out, item gets annihilated, money gets stolen
 
-void Cart::addItem()
+void Cart::addItem(Inventory inventory, string& item, int quantity)
 {
+	//inventory.checkAvailable(item);
+	Game game;
+	ofstream file1;
+	file1.open(username + ".txt");
+	if (file1.is_open())
+	{
+		string line;
+		line = game.name + game.genre + game.developer + game.publisher + game.release;
+		file1 << line;
+	}
+
+
 
 }//adds item to cart
 
-void Cart::removeItem()
+void Cart::removeItem(Inventory inventory, Node* item, int quantity)
 {
 	string deleteline;
 	string line;
@@ -92,32 +133,30 @@ void Cart::removeItem()
 	fin.close();
 }//removes item from cart
 
-void Cart::displayCart(Cart *cart)
+void Cart::displayCart() ///
 {
 	Tokenizer tkn;
 	string name, cartid, itemid, quantit;
-	fstream cartfile;
-	cartfile.open("cart.txt");
+	ifstream cartfile;
+	cartfile.open(username + ".txt");
 	if (cartfile.is_open())
 	{
+		std::cout << "---Currently whats in the cart: ---" << endl;
 		string line;
 		while (getline(cartfile, line))
 		{
 			tkn.setString(line);
 			tkn.readWord(name);
-			if (name == cart->username)
+			if (name == username)
 			{
 				tkn.readWord(cartid);
 				tkn.readWord(itemid);
 				tkn.readWord(quantit);
-				cout << "Name: " << name << endl;;
-				cout << "CartID: " << cartid << endl;
-				cout << "ItemID: " << itemid << endl;
+				cout << "CartID: " << cartid << "		";
+				cout << "ItemID: " << itemid << "		";
 				cout << "Quantity: " << quantit << endl;
 			}
 
 		}
 	}
-
 }//displays cart contents
-
