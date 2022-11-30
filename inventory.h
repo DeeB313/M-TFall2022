@@ -18,23 +18,20 @@ struct Node
 
 class Inventory
 {
-private:
-    Node *head;
-    Node *tail;
-
 public:
 
-
+    Node *head;
+    Node *tail;
 
     Inventory();
     ~Inventory();
 
 
-    void checkAvailable(string &item); //Checks if an item is available in the inventory(if there is more than one item of that name)
+    bool checkAvailable(string &item); //Checks if an item is available in the inventory(if there is more than one item of that name)
 
     void addItem(string &name, int &amount); //Adds an item to the inventory
 
-    bool removeItem(string &item, int &amount); //Removes item from the inventory
+    void removeItem(string &item, int &amount); //Removes item from the inventory
 
     void display(Inventory &inventory); //Displays all the items in the inventory
     void save();
