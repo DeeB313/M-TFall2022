@@ -160,7 +160,7 @@ int main()
                 }
 
                 //cart options
-                if (choice == "cart" || choice == "2")
+                else if (choice == "cart" || choice == "2")
                 {
                     while (1)
                     {
@@ -271,7 +271,7 @@ int main()
                 }
 
                 //account options
-                if (choice == "account" || choice == "3")
+                else if (choice == "account" || choice == "3")
                 {
                     while (1)
                     {
@@ -299,19 +299,19 @@ int main()
                                 if(user.username == users[i].username)
                                 {
                                     users.erase(users.begin()+ i);
-                                    
+
                                     //opens the user files in write mode then closes them, effectively deleting them
                                     ofstream outfile;
                                     outfile.open(user.username + "txt");
                                     outfile.close();
                                     outfile.open(user.username + "history.txt");
                                     outfile.close();
-                                    
+
                                     saveData(users, inventory, cart);
-                                            
+
                                 }
                             }
-                            
+
                             string filename = user.username + ".txt";
                             remove(filename.c_str());
                             cout << "Account deleted..." << endl;
@@ -332,9 +332,9 @@ int main()
                     }
                 }
 
-                if (user.username == "Justin" || user.username == "Marc" || user.username == "Dee" || user.username == "Brian")
+                else if (choice == "game" || choice == "2213")
                 {
-                    if (choice == "game" || choice == "2213")
+                    if (user.username == "Justin" || user.username == "Marc" || user.username == "Dee" || user.username == "Brian")
                     {
                         while (1)
                         {
@@ -418,6 +418,7 @@ int main()
                 //exit
                 else if (choice == "logout" || choice == "4")
                 {
+                    cout << "hello";
                     User newuser;
                     saveData(users, inventory, cart);
                     cart.logout();
