@@ -145,7 +145,7 @@ int main()
                         }
 
                         //exits
-                        else if (choice == "return" || choice == "5")
+                        else if (choice == "return" || choice == "5" || choice == "3")
                         {
                             saveData(users, inventory, cart);
                             break;
@@ -183,6 +183,8 @@ int main()
                         else if (choice == "checkout" || choice == "2")
                         {
                             cart.checkout(user, cart, inventory);
+                            cout << "Make here?" << endl;
+                            saveData(users, inventory, cart);
                         }
 
                         else if (choice == "history" || choice == "3")
