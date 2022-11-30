@@ -10,7 +10,7 @@ using namespace std;
 
 //work in progress, but the idea is to load files in the beginning using load, and save whenever we change anything using save
 void loadData(vector<User> &users, Inventory &inventory, vector<Game> &games); //, vector <Cart> carts, Inventory inventory
-void saveData(vector<User> &users, Inventory &inventory);
+void saveData(vector<User> &users, Inventory &inventory, Cart &cart);
 
 int main()
 {
@@ -40,26 +40,13 @@ int main()
     //loads data, if no data returns and continues
     loadData(users, inventory, games);
 
-
-    //display to see if the load works
-    //DELETE LATER JUSTIN
-    for(int i = 0; i < users.size(); i++)
-    {
-        users[i].display();
-    }
-
-    for(int i = 0; i < games.size(); i++)
-    {
-        games[i].display();
-    }
-
-    inventory.display(inventory);
-
     cout << "Welcome to the Store!" << endl;
     while(1)
     {
-        cout << ">> ";
-        cin >> choice;
+        if(loginFlag < 0)
+        {
+            break;
+        }
         //if logged in
         if(loginFlag > 0)
         {
@@ -73,7 +60,7 @@ int main()
                 {
                     cout << "Game Management" << endl;
                 }
-                cout << "Exit" << endl;
+                cout << "Logout" << endl;
                 cout << ">> ";
 
                 //input
@@ -84,8 +71,11 @@ int main()
                 {
                     while (1)
                     {
+                        int admin = 0;
+                        //menu
                         if (user.username == "Justin" || user.username == "Marc" || user.username == "Dee" || user.username == "Brian")
                         {
+                            admin = 1;
                             cout << "Check for Available Items" << endl;
                             cout << "Display Inventory" << endl;
                             cout << "Add Item" << endl;
@@ -96,6 +86,7 @@ int main()
                             cin >> choice;
                         }
 
+                        //menu for non admins
                         else
                         {
                             cout << "Check for Available Items" << endl;
@@ -106,6 +97,7 @@ int main()
                             cin >> choice;
                         }
 
+                        //checks item availability
                         if (choice == "check")
                         {
                             string item;
@@ -114,12 +106,15 @@ int main()
                             inventory.checkAvailable(item);
                         }
 
+                        //displays inventory
                         else if (choice == "display")
                         {
+                            cout << "Inventory: " << endl;
                             inventory.display(inventory);
                         }
 
-                        else if (choice == "add")
+                        //adds item
+                        else if (admin == 1 && choice == "add")
                         {
                             string name;
                             int amount;
@@ -129,27 +124,30 @@ int main()
                                 games[i].display();
                             }
                             cout << "What game would you like to add: ";
-                            cin >> name;
+                            cin.ignore();
+                            getline(cin, name);
                             cout << "How much?" << endl;
                             cin >> amount;
                             inventory.addItem(name, amount);
                         }
 
-                        else if (choice == "remove")
+                        //removes item
+                        else if (admin == 1 && choice == "remove")
                         {
                             string item;
                             int amount;
                             inventory.display(inventory);
                             cout << "What item would you like to remove: ";
-                            cin >> item;
+                            getline(cin, item);
                             cout << "How much?" << endl;
                             cin >> amount;
                             inventory.removeItem(item, amount);
                         }
 
-                        else if (choice == "exit")
+                        //exits
+                        else if(choice == "exit")
                         {
-                            saveData(users, inventory);
+                            saveData(users, inventory, cart);
                             break;
                         }
 
@@ -166,6 +164,7 @@ int main()
                     while(1)
                     {
                         cout << "View Cart" << endl;
+                        cout << "Checkout" << endl;
                         cout << "View Order History" << endl;
                         cout << "Add to Cart" << endl;
                         cout << "Remove from Cart" << endl;
@@ -176,59 +175,89 @@ int main()
 
                         if(choice == "view")
                         {
-                            //display cart
+                            cout << "Cart: " << endl;
+                            cart.displayCart();
+                        }
+
+                        else if(choice == "checkout")
+                        {
+                            cart.checkout(user, cart, inventory);
                         }
 
                         else if(choice == "history")
                         {
-                            //display history file
+                            int flag = 1;
+                            ifstream infile;
+                            infile.open(user.username + "history.txt");
+                            if(!infile.is_open())
+                            {
+                                cout << "You haven't purchased anything." << endl;
+                                //closes the file
+                                infile.close();
+                                //decrements flag so the section doesn't run
+                                flag -= 1;
+                            }
+
+                            //if file opens, then outputs history
+                            if(flag == 1)
+                            {
+                                string name, quantity, price;
+                                while(getline(infile,name), getline(infile, quantity), getline(infile,price))
+                                {
+                                    cout << name << endl;
+                                    cout << quantity << endl;
+                                    cout << price << endl;
+                                    cout << endl;
+                                }
+                            }
                         }
 
                         else if(choice == "add")
                         {
+                            int flag = 0;
                             string item;
                             int quantity;
                             while(1)
                             {
+                                if(flag == 1)
+                                {
+                                    break;
+                                }
                                 inventory.display(inventory);
                                 cout << "What item would you like to add?" << endl;
-                                cin >> item;
+                                cin.ignore();
+                                getline(cin, item);
                                 for(int i = 0; i<games.size(); i++)
                                 {
                                     if(item==games[i].name)
                                     {
+                                        flag = 1;
                                         break;
                                     }
                                 }
                             }
                             cout << "How many of this item?" << endl;
                             cin >> quantity;
-                            //additem in cart here
-
-
+                            cart.addItem(inventory ,item, quantity);
+                            cart.save();
                         }
 
                         else if(choice == "remove")
                         {
                             string item;
                             int quantity;
-                            //display cart here
-                            while(1)
-                            {
-                                inventory.display(inventory);
-                                cout << "What item would you like to remove?" << endl;
-                                cin >> item;
-                                //do some check here with the cart
-                            }
+                            cart.displayCart();
+                            cout << "What item would you like to remove?" << endl;
+                            cin.ignore();
+                            getline(cin, item);
                             cout << "How many of this item?" << endl;
                             cin >> quantity;
-
-                            //removeitem in cart here
+                            cart.removeItem(inventory, item, quantity);
                         }
 
                         else if(choice == "exit")
                         {
-                            saveData(users,inventory);
+                            saveData(users,inventory, cart);
                             break;
                         }
 
@@ -246,7 +275,8 @@ int main()
                     {
                         user.display();
                         //menu
-                        cout << "Edit account" << endl;
+                        cout << "Edit Account" << endl;
+                        cout << "Delete Account" << endl;
                         cout << "Exit" << endl;
                         cout << ">> ";
 
@@ -257,13 +287,18 @@ int main()
                         if(choice == "edit")
                         {
                             user.updateinfo();
-                            saveData(users, inventory);
+                            saveData(users, inventory, cart);
+                        }
+
+                        else if(choice == "delete")
+                        {
+
                         }
 
                         //exit
                         else if(choice == "exit")
                         {
-                            saveData(users, inventory);
+                            saveData(users, inventory, cart);
                             break;
                         }
 
@@ -344,7 +379,7 @@ int main()
 
                             else if(choice == "exit")
                             {
-                                saveData(users, inventory);
+                                saveData(users, inventory, cart);
                                 break;
                             }
 
@@ -357,9 +392,12 @@ int main()
                 }
 
                 //exit
-                if(choice == "exit")
+                else if (choice == "logout")
                 {
-                    saveData(users, inventory);
+                    User newuser;
+                    saveData(users, inventory, cart);
+                    cart.logout();
+                    user = newuser;
                     loginFlag -= 1;
                     break;
                 }
@@ -374,9 +412,9 @@ int main()
 
 
         //if the user hasn't logged in
-        if(choice == "login")
+        if(loginFlag == 0)
         {
-            while(1)
+            while(loginFlag == 0)
             {
                 //menu
                 cout << "Login" << endl;
@@ -388,8 +426,31 @@ int main()
                 //login
                 if(choice == "login")
                 {
+                    while(1)
+                    {
+                        int flag = 0;
+                        cout << "Enter username: ";
+                        cin >> username;
+                        for(int i = 0; i<users.size(); i++)
+                        {
+                            if(username == users[i].username)
+                            {
+                                user = users[i];
+                                cart.login(user, cart, inventory);
+                                flag += 1;
+                                cout << endl;
+                            }
+                        }
+
+                        if(flag > 0)
+                        {
+                            break;
+                        }
+                    }
+
+
                     //login goes here
-                    loginFlag += 1;
+                    loginFlag = 1;
                 }
 
                 //if the user enters 2, prompts account creation
@@ -426,7 +487,7 @@ int main()
                     cout << user.username << " has logged in." << endl;
 
                     //saves data to file
-                    saveData(users, inventory);
+                    saveData(users, inventory, cart);
 
                     //updates loginFlag and goes to log in menu
                     loginFlag += 1;
@@ -436,22 +497,15 @@ int main()
                 //exits login/account creation menu
                 else if(choice == "exit")
                 {
+                    loginFlag -= 10000;
                     break;
                 }
+
+                else
+                {
+                    cout << "..." << endl;
+                }
             }
-
-        }
-
-        //exits
-        else if(choice == "exit")
-        {
-            saveData(users, inventory);
-            break;
-        }
-
-        else
-        {
-            cout << "..." << endl;
         }
     }
 }
@@ -569,7 +623,7 @@ void loadData(vector<User> &users, Inventory &inventory, vector<Game> &games)
 }
 
 //work in progress
-void saveData(vector<User> &users, Inventory &inventory)
+void saveData(vector<User> &users, Inventory &inventory, Cart &cart)
 {
     //outfile
     ofstream outfile;
@@ -593,4 +647,7 @@ void saveData(vector<User> &users, Inventory &inventory)
 
     //saves inventory
     inventory.save();
+
+    //saves cart
+    cart.save();
 }
