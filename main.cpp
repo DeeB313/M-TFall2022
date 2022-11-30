@@ -312,6 +312,8 @@ int main()
                                 }
                             }
                             
+                            string filename = user.username + ".txt";
+                            remove(filename.c_str());
                             cout << "Account deleted..." << endl;
                         }
 
