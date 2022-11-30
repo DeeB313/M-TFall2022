@@ -109,8 +109,6 @@ void Cart::login(User &user, Cart &cart, Inventory &inventory)
             //adds item into inventory
             //this code chunk creates the game object
             Game addgame;
-            //filename
-            string filename = "";
 
             //creates the game using fileGame
             addgame.fileGame(name + ".txt");
@@ -298,6 +296,8 @@ void Cart::login(User &user, Cart &cart, Inventory &inventory)
         }
     }
 
+    std::cout << "We made it here" << endl;
+
     //closes the file
     infile.close();
 }
@@ -331,7 +331,9 @@ void Cart::checkout(User &user, Cart &cart, Inventory inventory)
         outfile << "Quantity bought" << temp->quantity << std::endl;
         outfile << "Total Price: " << temp->quantity*temp->price << std::endl;
         total += temp->quantity*temp->price;
+        temp = temp->next;
     }
+    outfile.close();
     cout << "Your total is " << total << endl;
     if (user.storeToken >= total)
     {
@@ -430,6 +432,8 @@ void Cart::addItem(Inventory inventory, string& item, int quantity)
         {
             head->price = 25;
         }
+        inventory.removeItem(item, quantity);
+        inventory.save();
         return;
     }
 
@@ -611,21 +615,11 @@ void Cart::displayCart() ///
 
     while(temp != nullptr)
     {
-
-
-        //if the item is gone
-        if(temp->quantity == 0)
-        {
-        }
-        else
-        {
-            //displays information
-            temp->game.display();
-            std::cout << std::endl;
-            std::cout << "Quantity left: " << temp->quantity << std::endl;
-            std::cout << "Price: " << temp->price << std::endl << std::endl;
-
-        }
+        //displays information
+        temp->game.display();
+        std::cout << std::endl;
+        std::cout << "Quantity left: " << temp->quantity << std::endl;
+        std::cout << "Price: " << temp->price << std::endl << std::endl;
         temp = temp->next;
     }
 }
@@ -644,7 +638,6 @@ void Cart::save()
     //if inventory hasn't been made, output that it's empty
     if(head == nullptr)
     {
-        std::cout << "Inventory is empty." << std::endl;
         return;
     }
 
@@ -655,4 +648,5 @@ void Cart::save()
         outfile << temp->quantity << std::endl;
         temp = temp->next;
     }
+    outfile.close();
 }
