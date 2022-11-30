@@ -86,7 +86,7 @@ void Cart::login(User &user, Cart &cart, Inventory &inventory)
         }
     }
 
-    infile.open(user.username+"history.txt");
+    infile.open(user.username+".txt");
 
     //if the file doesn't open, then the inventory section will not run
     if(!infile.is_open())
@@ -97,10 +97,10 @@ void Cart::login(User &user, Cart &cart, Inventory &inventory)
         flag -= 1;
     }
 
-
     //runs if the inventory file opens
     if(flag == 1)
     {
+        cout << "Hello";
         while(getline(infile, name), getline(infile, tempquant))
         {
             //converts the string input into an int
@@ -177,7 +177,6 @@ void Cart::login(User &user, Cart &cart, Inventory &inventory)
                 }
                 return;
             }
-
 
             //loops while temp isn't null
             while(temp != nullptr)
@@ -295,9 +294,6 @@ void Cart::login(User &user, Cart &cart, Inventory &inventory)
             }
         }
     }
-
-    std::cout << "We made it here" << endl;
-
     //closes the file
     infile.close();
 }
@@ -328,7 +324,7 @@ void Cart::checkout(User &user, Cart &cart, Inventory inventory)
     while(temp != nullptr)
     {
         outfile << "Item name: " << temp->game.name << std::endl;
-        outfile << "Quantity bought" << temp->quantity << std::endl;
+        outfile << "Quantity bought: " << temp->quantity << std::endl;
         outfile << "Total Price: " << temp->quantity*temp->price << std::endl;
         total += temp->quantity*temp->price;
         temp = temp->next;
@@ -350,6 +346,7 @@ void Cart::checkout(User &user, Cart &cart, Inventory inventory)
             temp = head;
         }
 
+        head = nullptr;
         tail = nullptr;
     }
 
@@ -358,6 +355,7 @@ void Cart::checkout(User &user, Cart &cart, Inventory inventory)
         cout << "You don't have enough money." << endl;
     }
 
+    cout << "We made it!!!" << endl;
 }
 
 void Cart::addItem(Inventory inventory, string& item, int quantity)
