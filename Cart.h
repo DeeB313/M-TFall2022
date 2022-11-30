@@ -19,19 +19,19 @@ public:
 
     Cart();
 
+    void createCart();
+
     void login(User* user); //logs in to a user
 
     void logout(); //logs out of current user
 
-    void checkout(Cart& cart); //checks out, item gets annihilated, money gets stolen
+    void checkout(User* user, Cart* cart); //checks out, item gets annihilated, money gets stolen
 
     void addItem(Inventory inventory, string& item, int quantity); //adds item to cart
 
-    void removeItem(Inventory inventory, Node* item, int quantity); //removes item from cart
+    void removeItem(Inventory inventory, string& item, int quantity); //removes item from cart
 
     void displayCart(); //displays cart contents
-
-    double Total(Cart& cart); //displays cart total, this will be called by displayCart
 
     void createCart();
 
