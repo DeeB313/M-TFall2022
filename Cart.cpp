@@ -105,69 +105,89 @@ void Cart::addItem(Inventory inventory, string& item, int quantity)
 {
 	//inventory.checkAvailable(item);
 	Tokenizer tkn;
-	string a1, b1, c1, a2, b2, c2;
+	string a1, b1, c1;
 	Game game;
 	ifstream file2;
 	string cartname = "dummy.txt";
 	string line1;
+	string line2;
 	file2.open(username + ".txt");
 	if (file2.is_open())
 	{
-		while (getline(file2, line1))
+		getline(file2, line1);
+		if (line1 == "")
 		{
-			tkn.setString(line1);
-			tkn.readWord(a1);
-			tkn.readWord(b1);
-			tkn.readWord(c1);
-			if (b1 == item)
+			ofstream file1(username + ".txt", std::ios_base::app | std::ios_base::out);
+			if (file1.is_open())
 			{
-				ofstream file1("dummy.txt", std::ios_base::app | std::ios_base::out);
-				if (file1.is_open())
-				{
-					int num = stoi(c1);
-					num += quantity;
-					file1 << cartID;
-					file1 << " ";
-					file1 << item + " ";
-					file1 << num;
-					file1 << "\n";
-					cout << "previous item updated" << endl;
-					file1.close();
-
-					string line2;
-					ifstream file1("dummy.txt");
-					ofstream file2(username + ".txt");
-
-					getline(file1, line2);
-					file2 << line2;
-
-					file1.close();
-
-					ofstream test("dummy.txt", std::ios_base::out | std::ios_base::trunc);
-					test.close();
-					
-					inventory.removeItem(item, num);
-				}
+				file1 << "\b";
+				file1 << cartID;
+				file1 << " ";
+				file1 << item + " ";
+				file1 << quantity;
+				file1 << "\n";
+				cout << "new item added" << endl;
+				file1.close();
 			}
-			if (line1 == "" || b1 != item)
+		}
+		else
+		{
+			file2.clear();
+			file2.seekg(0);
+			while (getline(file2, line2))
 			{
-				ofstream file1(username + ".txt", std::ios_base::app | std::ios_base::out);
-				if (file1.is_open())
+				tkn.setString(line2);
+				tkn.readWord(a1);
+				tkn.readWord(b1);
+				tkn.readWord(c1);
+				if (b1 == item)
 				{
-					file1 << "\n";
-					file1 << cartID;
-					file1 << " ";
-					file1 << item + " ";
-					file1 << quantity;
-					file1 << "\n";
-					cout << "new item added" << endl;
-					file1.close();
+					ofstream file1("dummy.txt", std::ios_base::app | std::ios_base::out);
+					if (file1.is_open())
+					{
+							int num = stoi(c1);
+							num += quantity;
+							file1 << cartID;
+							file1 << " ";
+							file1 << item + " ";
+							file1 << num;
+							file1 << "\n";
+							cout << "previous item updated" << endl;
+							file1.close();
+
+							string line2;
+							ifstream file1("dummy.txt");
+							ofstream file2(username + ".txt");
+
+							getline(file1, line2);
+							file2 << line2;
+
+							file1.close();
+
+							ofstream test("dummy.txt", std::ios_base::out | std::ios_base::trunc);
+							test.close();
+
+							inventory.removeItem(item, num);
+					}
 				}
-			}
-		
+				else
+				{
+					ofstream file1(username + ".txt", std::ios_base::app | std::ios_base::out);
+					if (file1.is_open())
+					{
+						file1 << "\n";
+						file1 << cartID;
+						file1 << " ";
+						file1 << item + " ";
+						file1 << quantity;
+						file1 << "\n";
+						cout << "new item added" << endl;
+						file1.close();
+					}
+				}
+			}	
 		}
 	}
-
 }
 
 void Cart::removeItem(Inventory inventory, Node* item, int quantity)
