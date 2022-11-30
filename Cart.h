@@ -33,8 +33,6 @@ public:
 
     void displayCart(); //displays cart contents
 
-    void createCart();
-
     inline bool exist(const std::string& name);
 
     bool is_empty(std::ifstream& pFile);
