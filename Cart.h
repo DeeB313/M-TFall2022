@@ -6,26 +6,27 @@
 using std::ifstream;
 using namespace std;
 
+
 class Cart
 {
 
-
 public:
+    Node *head;
+    Node *tail;
     string username;
     string password;
     int quantity;
-    int itemID;
-    int cartID;
 
     Cart();
+    ~Cart();
 
     void createCart();
 
-    void login(User* user); //logs in to a user
+    void login(User &user, Cart &cart, Inventory &inventory); //logs in to a user
 
     void logout(); //logs out of current user
 
-    void checkout(User* user, Cart* cart); //checks out, item gets annihilated, money gets stolen
+    void checkout(User& user, Cart &cart, Inventory inventory); //checks out, item gets annihilated, money gets stolen
 
     void addItem(Inventory inventory, string& item, int quantity); //adds item to cart
 
@@ -36,6 +37,8 @@ public:
     inline bool exist(const std::string& name);
 
     bool is_empty(std::ifstream& pFile);
+
+    void save();
 
 
 
