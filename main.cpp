@@ -294,7 +294,25 @@ int main()
 
                         else if (choice == "delete" || choice == "2")
                         {
-
+                            for(int i = 0; i < users.size(); i++)
+                            {
+                                if(user.username == users[i].username)
+                                {
+                                    users.erase(users.begin()+ i);
+                                    
+                                    //opens the user files in write mode then closes them, effectively deleting them
+                                    ofstream outfile;
+                                    outfile.open(user.username + "txt");
+                                    outfile.close();
+                                    outfile.open(user.username + "history.txt");
+                                    outfile.close();
+                                    
+                                    saveData(users, inventory, cart);
+                                            
+                                }
+                            }
+                            
+                            cout << "Account deleted..." << endl;
                         }
 
                         //exit
