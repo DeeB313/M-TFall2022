@@ -35,3 +35,6 @@ Update, almost everything is finished, just the cart management needs to be done
 
 11/29/2022 - Dee
 Added display function + minor stuff. Checkout, Total function could be done in few minutes after everything is finished. The only thing remaining is add, remove function, and figuring out the format to add items into the cart.
+
+11/29/2022 - Dee
+Everything in cart class except the checkout() function is done.
