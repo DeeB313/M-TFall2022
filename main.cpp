@@ -9,7 +9,7 @@
 using namespace std;
 
 //work in progress, but the idea is to load files in the beginning using load, and save whenever we change anything using save
-void loadData(vector<User> &users, Inventory &inventory); //, vector <Cart> carts, Inventory inventory
+void loadData(vector<User> &users, Inventory &inventory, vector<Game> &games); //, vector <Cart> carts, Inventory inventory
 void saveData(vector<User> &users, Inventory &inventory);
 
 int main()
@@ -17,30 +17,49 @@ int main()
     //choice
     string choice;
 
-    //list for the carts and users
+    //username
+    string username;
+
+    //list for the games and users
     vector<User> users;
-    vector<Cart> carts;
     vector<Game> games;
 
     //the inventory
     Inventory inventory;
 
+    //the current user
+    User user;
+
+    //cart for current user
+    Cart cart;
+
 
     //flag for login
     int loginFlag = 0;
 
-    //username
-    string username;
-
-    //the current user
-    User user;
-
     //loads data, if no data returns and continues
-    loadData(users, inventory);
+    loadData(users, inventory, games);
+
+
+    //display to see if the load works
+    //DELETE LATER JUSTIN
+    for(int i = 0; i < users.size(); i++)
+    {
+        users[i].display();
+    }
+
+    for(int i = 0; i < games.size(); i++)
+    {
+        games[i].display();
+    }
+
+    inventory.display(inventory);
 
     cout << "Welcome to the Store!" << endl;
     while(1)
     {
+        cout << ">> ";
+        cin >> choice;
         //if logged in
         if(loginFlag > 0)
         {
@@ -67,24 +86,26 @@ int main()
                     {
                         if (user.username == "Justin" || user.username == "Marc" || user.username == "Dee" || user.username == "Brian")
                         {
-                            cout << "Check for available items." << endl;
-                            cout << "Display full iventory." << endl;
-                            cout << "Add item." << endl;
-                            cout << "Remove item." << endl;
-                            cout << "Exit." << endl;
-                  
+                            cout << "Check for Available Items" << endl;
+                            cout << "Display Inventory" << endl;
+                            cout << "Add Item" << endl;
+                            cout << "Remove Item" << endl;
+                            cout << "Exit" << endl;
+                            cout << ">> ";
+
                             cin >> choice;
                         }
-                        
+
                         else
                         {
-                            cout << "Check for available items." << endl;
-                            cout << "Display full inventory." << endl;
-                            cout << "Exit." << endl;
-                            
+                            cout << "Check for Available Items" << endl;
+                            cout << "Display Inventory" << endl;
+                            cout << "Exit" << endl;
+                            cout << ">> ";
+
                             cin >> choice;
                         }
-                        
+
                         if (choice == "check")
                         {
                             string item;
@@ -92,38 +113,49 @@ int main()
                             cin >> item;
                             inventory.checkAvailable(item);
                         }
-                        
-                        if (choice == "display")
+
+                        else if (choice == "display")
                         {
                             inventory.display(inventory);
                         }
-                        
-                        if (choice == "add")
-                        {                            
+
+                        else if (choice == "add")
+                        {
                             string name;
                             int amount;
+                            cout << "Games: " << endl << endl;
+                            for(int i = 0; i<games.size(); i++)
+                            {
+                                games[i].display();
+                            }
                             cout << "What game would you like to add: ";
                             cin >> name;
                             cout << "How much?" << endl;
                             cin >> amount;
                             inventory.addItem(name, amount);
                         }
-                        
-                        if (choice == "remove")
+
+                        else if (choice == "remove")
                         {
                             string item;
                             int amount;
+                            inventory.display(inventory);
                             cout << "What item would you like to remove: ";
                             cin >> item;
                             cout << "How much?" << endl;
                             cin >> amount;
                             inventory.removeItem(item, amount);
                         }
-                        
-                        if (choice == "exit")
+
+                        else if (choice == "exit")
                         {
                             saveData(users, inventory);
                             break;
+                        }
+
+                        else
+                        {
+                            cout << "..." << endl;
                         }
                     }
                 }
@@ -131,7 +163,80 @@ int main()
                 //cart options
                 if(choice == "cart")
                 {
+                    while(1)
+                    {
+                        cout << "View Cart" << endl;
+                        cout << "View Order History" << endl;
+                        cout << "Add to Cart" << endl;
+                        cout << "Remove from Cart" << endl;
+                        cout << "Exit" << endl;
+                        cout << ">> ";
 
+                        cin >> choice;
+
+                        if(choice == "view")
+                        {
+                            //display cart
+                        }
+
+                        else if(choice == "history")
+                        {
+                            //display history file
+                        }
+
+                        else if(choice == "add")
+                        {
+                            string item;
+                            int quantity;
+                            while(1)
+                            {
+                                inventory.display(inventory);
+                                cout << "What item would you like to add?" << endl;
+                                cin >> item;
+                                for(int i = 0; i<games.size(); i++)
+                                {
+                                    if(item==games[i].name)
+                                    {
+                                        break;
+                                    }
+                                }
+                            }
+                            cout << "How many of this item?" << endl;
+                            cin >> quantity;
+                            //additem in cart here
+
+
+                        }
+
+                        else if(choice == "remove")
+                        {
+                            string item;
+                            int quantity;
+                            //display cart here
+                            while(1)
+                            {
+                                inventory.display(inventory);
+                                cout << "What item would you like to remove?" << endl;
+                                cin >> item;
+                                //do some check here with the cart
+                            }
+                            cout << "How many of this item?" << endl;
+                            cin >> quantity;
+
+                            //removeitem in cart here
+                        }
+
+                        else if(choice == "exit")
+                        {
+                            saveData(users,inventory);
+                            break;
+                        }
+
+                        else
+                        {
+                            cout << "..." << endl;
+                        }
+                    }
                 }
 
                 //account options
@@ -142,7 +247,6 @@ int main()
                         user.display();
                         //menu
                         cout << "Edit account" << endl;
-                        cout << "View order history" << endl;
                         cout << "Exit" << endl;
                         cout << ">> ";
 
@@ -156,19 +260,18 @@ int main()
                             saveData(users, inventory);
                         }
 
-                        //view history
-                        if(choice == "history")
-                        {
-
-                        }
-
                         //exit
-                        if(choice == "exit")
+                        else if(choice == "exit")
                         {
+                            saveData(users, inventory);
                             break;
                         }
-                    }
 
+                        else
+                        {
+                            cout << "..." << endl;
+                        }
+                    }
                 }
 
                 if(user.username == "Justin" || user.username == "Marc" || user.username == "Dee" || user.username == "Brian")
@@ -177,35 +280,47 @@ int main()
                     {
                         while(1)
                         {
+                            cout << "List Games" << endl;
                             cout << "Create Game" << endl;
                             cout << "Edit Game" << endl;
                             cout << ">> " << endl;
 
                             cin >> choice;
-                            if(choice == "create")
+
+                            //lists games
+                            if(choice == "list")
+                            {
+                                for(int i = 0; i < games.size(); i++)
+                                {
+                                    games[i].display();
+                                }
+                            }
+
+                            else if(choice == "create")
                             {
                                 cin.ignore();
                                 Game game;
                                 string name, genre, developer, publisher, release, temprat;
                                 int rating;
-                                cout << "Name: " << endl;
+                                cout << "Name: ";
                                 getline(cin,name);
-                                cout << "Genre: " << endl;
+                                cout << "Genre: ";
                                 getline(cin, genre);
-                                cout << "Developer: " << endl;
+                                cout << "Developer: ";
                                 getline(cin, developer);
-                                cout << "Publisher: " << endl;
+                                cout << "Publisher: ";
                                 getline(cin, publisher);
-                                cout << "Release: " << endl;
+                                cout << "Release: ";
                                 getline(cin, release);
-                                cout << "Rating: " << endl;
+                                cout << "Rating: ";
                                 getline(cin, temprat);
                                 rating = stoi(temprat);
                                 game.setGame(name, genre, developer, publisher, release, rating);
                                 games.push_back(game);
+                                cout << endl;
 
                             }
-                            if(choice == "edit")
+                            else if(choice == "edit")
                             {
                                 int flag = 0;
                                 string name;
@@ -227,10 +342,15 @@ int main()
                                 }
                             }
 
-                            if(choice == "exit")
+                            else if(choice == "exit")
                             {
                                 saveData(users, inventory);
                                 break;
+                            }
+
+                            else
+                            {
+                                cout << "..." << endl;
                             }
                         }
                     }
@@ -252,29 +372,28 @@ int main()
             }
         }
 
-        //input
-        cout << ">> ";
-        cin >> choice;
+
+        //if the user hasn't logged in
         if(choice == "login")
         {
             while(1)
             {
                 //menu
-                cout << "1. Enter account information: " << endl;
-                cout << "2. Create account" << endl;
-                cout << "3. Exit" << endl;
+                cout << "Login" << endl;
+                cout << "Create Account" << endl;
+                cout << "Exit" << endl;
                 cout << ">> ";
                 cin >> choice;
 
                 //login
-                if(choice == "1")
+                if(choice == "login")
                 {
                     //login goes here
                     loginFlag += 1;
                 }
 
                 //if the user enters 2, prompts account creation
-                if(choice == "2")
+                else if(choice == "create")
                 {
                     while(1)
                     {
@@ -315,35 +434,19 @@ int main()
                 }
 
                 //exits login/account creation menu
-                if(choice == "3")
+                else if(choice == "exit")
                 {
                     break;
                 }
             }
 
         }
-        if(choice == "exit")
+
+        //exits
+        else if(choice == "exit")
         {
             saveData(users, inventory);
             break;
-        }
-
-        if(choice == "3")
-        {
-            if(!users.empty())
-            {
-                cout << " you have stuff";
-            }
-            else
-            {
-                cout << "you have nothing";
-            }
-            for(int i = 0; i < users.size(); i++)
-            {
-                users[i].display();
-                cout << endl;
-            }
-
         }
 
         else
@@ -356,7 +459,7 @@ int main()
 
 
 //work in progress
-void loadData(vector<User> &users, Inventory &inventory)
+void loadData(vector<User> &users, Inventory &inventory, vector<Game> &games)
 {
     int flag = 1;
     //initializing things to be read from file
@@ -399,11 +502,6 @@ void loadData(vector<User> &users, Inventory &inventory)
         infile.close();
     }
 
-    /*
-    insert cart stuff here
-    */
-
-
     //new initializers for inventory file
     string name, tempquant;
 
@@ -414,7 +512,7 @@ void loadData(vector<User> &users, Inventory &inventory)
     {
         //closes the file
         infile.close();
-        //decrements flag so the user file section doesn't run
+        //decrements flag so the inventory file section doesn't run
         flag -= 1;
     }
 
@@ -431,6 +529,43 @@ void loadData(vector<User> &users, Inventory &inventory)
             inventory.addItem(name, quantity);
         }
     }
+
+    //closes the file
+    infile.close();
+
+    //Sets games
+    string filename, none;
+
+    infile.open("inventory.txt");
+
+    //if the file doesn't open, then the section will not run
+    if(!infile.is_open())
+    {
+        //closes the file
+        infile.close();
+        //decrements flag so the section doesn't run
+        flag -= 1;
+    }
+
+    //runs if the inventory file opens
+    if(flag == 1)
+    {
+        Game temp;
+
+        //none doesn't do anything except eat up the quantity value
+        while(getline(infile, filename), getline(infile, none))
+        {
+            //sets the filename
+            filename = filename + ".txt";
+
+            //sets the game and pushes it into the vector
+            temp.fileGame(filename);
+            games.push_back(temp);
+        }
+    }
+
+    //closes the file
+    infile.close();
 }
 
 //work in progress
@@ -456,5 +591,6 @@ void saveData(vector<User> &users, Inventory &inventory)
     //closes the file
     outfile.close();
 
+    //saves inventory
     inventory.save();
 }
