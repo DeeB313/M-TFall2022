@@ -355,4 +355,6 @@ void Inventory::save()
         outfile << temp->quantity << std::endl;
         temp = temp->next;
     }
+
+    outfile.close();
 }
