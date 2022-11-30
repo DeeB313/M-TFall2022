@@ -1,8 +1,7 @@
-#include "Cart.h"
-#include "User.h"
-#include "Inventory.h"
+#include "cart.h"
+#include "user.h"
+#include "inventory.h"
 #include "game.h"
-#include "Tokenizer.h"
 #include <iostream>
 #include <stdio.h>
 using std::istream;
@@ -11,337 +10,649 @@ using std::string;
 
 Cart::Cart()
 {
-	username = "empty";
-	itemID = 0;
-	cartID = 1;
-	quantity = 0;
+    username = "";
+    quantity = 0;
+    head = nullptr;
+    tail = nullptr;
+}
+
+Cart::~Cart()
+{
+    //desconstructor, loops and deletes every node
+    Node *temp = head;
+    while(temp != nullptr)
+    {
+        head = head->next;
+        delete temp;
+        temp = head;
+    }
+
+    tail = nullptr;
 }
 
 bool Cart::is_empty(std::ifstream& pFile)
 {
-	return pFile.peek() == std::ifstream::traits_type::eof();
+    return pFile.peek() == std::ifstream::traits_type::eof();
 }
 
 inline bool Cart::exist(const std::string& name) ///
 {
-	ifstream file(name);
-	if (!file)            // If the file was not found, then file is 0, i.e. !file=1 or true.
-		return false;    // The file was not found.
-	else                 // If the file was found, then file is non-0.
-		return true;     // The file was found.
+    ifstream file(name);
+    if (!file)            // If the file was not found, then file is 0, i.e. !file=1 or true.
+        return false;    // The file was not found.
+    else                 // If the file was found, then file is non-0.
+        return true;     // The file was found.
 }
 
 void Cart::createCart() ///
 {
-	string cartname = username + ".txt";
-	ofstream file1;
-	if (exist(cartname) == true)
-	{
-		cout << "Cart history for user " << username << " exists" << endl;
-	}
-	else
-	{
-		file1.open(cartname);
-		cartID += 1;
-		cout << "Cart history does not exist. New cart created." << endl;
-	}
+    string cartname = username + ".txt";
+    ofstream file1;
+    if (exist(cartname) == true)
+    {
+        cout << "Cart history for user " << username << " exists" << endl;
+    }
+    else
+    {
+        file1.open(cartname);
+        cout << "Cart history does not exist. New cart created." << endl;
+    }
 }
 
-void Cart::login(User* user) ///
+void Cart::login(User &user, Cart &cart, Inventory &inventory)
 {
-	bool ex = true;
-	string username, password;
+    int flag = 1;
+    ifstream infile;
+    string name, tempquant;
+    bool ex = true;
+    string password;
+    this->username = user.username;
+
+    while (ex)
+    {
+        cout << "Enter your password: ";
+        cin >> password;
 
 
-	while (ex)
-	{
-		cout << "Enter your username: ";
-		cin >> username;
-		this->username = username;
+        if (password == user.password)
+        {
+            cout << "Logged in" << endl;
+            createCart();
+            ex = false;
+        }
+        else
+        {
+            cout << "Wrong password" << endl;
+        }
+    }
 
-		if (user->username == this->username)
-		{
-			cout << "Enter your password: ";
-			cin >> password;
-			this->password = password;
+    infile.open(user.username+"history.txt");
 
-			if (user->password == this->password)
-			{
-				cout << "logged in" << endl;
-				createCart();
-				ex = false;
-			}
-			else
-			{
-				cout << "wrong password" << endl;
-			}
-		}
-		else
-		{
-			cout << "wrong username" << endl;
-		}
+    //if the file doesn't open, then the inventory section will not run
+    if(!infile.is_open())
+    {
+        //closes the file
+        infile.close();
+        //decrements flag so the inventory file section doesn't run
+        flag -= 1;
+    }
 
-	}
+
+    //runs if the inventory file opens
+    if(flag == 1)
+    {
+        while(getline(infile, name), getline(infile, tempquant))
+        {
+            //converts the string input into an int
+            int quantity = stoi(tempquant);
+
+            //adds item into inventory
+            //this code chunk creates the game object
+            Game addgame;
+            //filename
+            string filename = "";
+
+            //creates the game using fileGame
+            addgame.fileGame(name + ".txt");
+
+            //creates new node with the inserted character as data
+            Node *cartitem = new Node;
+            cartitem->game = addgame;
+
+            //sets temp equal to head
+            Node *temp = head;
+
+            //if head is empty, sets head to added Character, next and prev to null, and tail equal to head
+            if(head == nullptr)
+            {
+                head = cartitem;
+                head->next = nullptr;
+                head->prev = nullptr;
+                tail = head;
+                head->quantity += quantity;
+
+                //sets price
+                if(cartitem->game.developer == "Ubisoft")
+                {
+                    head->price = 50;
+                }
+
+                else if(cartitem->game.developer == "Activision")
+                {
+                    head->price = 60;
+                }
+
+                else if(cartitem->game.developer == "Bungie")
+                {
+                    head->price = 25;
+                }
+
+                else if(cartitem->game.developer == "Nintendo")
+                {
+                    head->price = 35;
+                }
+
+                else if(cartitem->game.developer == "Square Enix")
+                {
+                    head->price = 40;
+                }
+
+                else if(cartitem->game.developer == "Capcom")
+                {
+                    head->price = 55;
+                }
+
+                else if(cartitem->game.developer == "Fromsoftware")
+                {
+                    head->price = 60;
+                }
+
+                else if(cartitem->game.developer == "Sony")
+                {
+                    head->price = 60;
+                }
+
+                //static price of 25 for "unknown" developers
+                else
+                {
+                    head->price = 25;
+                }
+                return;
+            }
+
+
+            //loops while temp isn't null
+            while(temp != nullptr)
+            {
+                //sets Game class insert and current equal to addedCharacter and temp
+                Game insert = cartitem->game;
+                Game current = temp->game;
+
+                //if the added item is earlier in the alphabet than temp
+                if(insert.name < current.name)
+                {
+                    //if temp is at the head
+                    if(temp == head)
+                    {
+                        //increments quantity
+                        cartitem->quantity += quantity;
+                        //sets the added item as the head of the list and ends the function
+                        cartitem->next = head;
+                        cartitem->prev = nullptr;
+                        head->prev = cartitem;
+                        head = cartitem;
+                        break;
+                    }
+
+
+                    //if temp is anything within the list
+                    else
+                    {
+                        cartitem->quantity += 1;
+                        //puts the added item between temp and temp's previous node and ends the function
+                        temp->prev->next = cartitem;
+                        cartitem->prev = temp->prev;
+                        temp->prev = cartitem;
+
+                        //if the next node isn't null
+                        if(cartitem->next != nullptr)
+                        {
+                            cartitem->next = temp;
+                            break;
+                        }
+                    }
+                }
+
+                //if the game is already in the list
+                if(insert.name == current.name)
+                {
+                   temp->quantity += quantity;
+                   delete cartitem;
+                   break;
+                }
+
+                //if the inserted item is bigger than temp, and if temp is at the tail/end
+                else
+                {
+                    //sets the added item as the tail of the list and ends the function
+                    if(temp == tail)
+                    {
+                        cartitem->quantity += quantity;
+                        tail->next = cartitem;
+                        cartitem->next = nullptr;
+                        cartitem->prev = tail;
+                        tail = cartitem;
+                        break;
+                    }
+                }
+                //goes to the next node
+                temp = temp->next;
+            }
+
+            //sets price
+            if(cartitem->game.developer == "Ubisoft")
+            {
+                cartitem->price = 50;
+            }
+
+            else if(cartitem->game.developer == "Activision")
+            {
+                cartitem->price = 60;
+            }
+
+            else if(cartitem->game.developer == "Bungie")
+            {
+                cartitem->price = 25;
+            }
+
+            else if(cartitem->game.developer == "Nintendo")
+            {
+                cartitem->price = 35;
+            }
+
+            else if(cartitem->game.developer == "Square Enix")
+            {
+                cartitem->price = 40;
+            }
+
+            else if(cartitem->game.developer == "Capcom")
+            {
+                cartitem->price = 55;
+            }
+
+            else if(cartitem->game.developer == "Fromsoftware")
+            {
+                cartitem->price = 60;
+            }
+
+            else if(cartitem->game.developer == "Sony")
+            {
+                cartitem->price = 60;
+            }
+
+            //static price of 25 for "unknown" developers
+            else
+            {
+                cartitem->price = 25;
+            }
+        }
+    }
+
+    //closes the file
+    infile.close();
 }
 void Cart::logout() ///
 {
-	string confirm;
-	cout << endl;
-	cout << "You are about to log out of the store." << endl;
-	cout << "Your cart history will be deleted after you log out." << endl;
-	cout << "Type confirm to log out" << endl;
-	cin >> confirm;
-	if (confirm == "confirm")
-	{
-		string filename = username + ".txt";
-		remove(filename.c_str());
-		this->username = "";
-		this->password = "";
-		cout << "You are logged out." << endl;
-	}
+    this->username = "";
+    //desconstructor, loops and deletes every node
+    Node *temp = head;
+    while(temp != nullptr)
+    {
+        head = head->next;
+        delete temp;
+        temp = head;
+    }
+
+    tail = nullptr;
 }//logs out of current user
 
-void Cart::checkout(User* user, Cart* cart)
+void Cart::checkout(User &user, Cart &cart, Inventory inventory)
 {
-	int total = 0;
-	string game1 = "Mario";
-	string game2 = "Sekiro";
-	string game3 = "Sonic";
-	Inventory inv;
-	Tokenizer tkn;
-	ifstream file1;
-	string line1;
-	string cartid, name, quantity;
-	file1.open(username + ".txt");
-	if (file1.is_open())
-	{
-		displayCart();
-		while (getline(file1, line1))
-		{
-			tkn.setString(line1);
-			tkn.readWord(cartid);
-			tkn.readWord(name);
-			tkn.readWord(quantity);
-			if (name == "Mario")
-			{
-				int quan = stoi(quantity);
-				total += quan * 3;
-				removeItem(inv, game1, quan);
-			}
-			else if (name == "Sekiro")
-			{
-				int quan = stoi(quantity);
-				total += quan * 5;
-				removeItem(inv, game2, quan);
+    ofstream outfile;
+    string filename = user.username + "history.txt";
+    Node *temp = head;
+    int total = 0;
 
-			}
-			else if (name == "Sonic")
-			{
-				int quan = stoi(quantity);
-				total += quan * 9;
-				removeItem(inv, game3, quan);
-			}
-		}
-	}
-	cout << "Your total is " << total << endl;
-	int StoreCredit = user->storeToken;
-	if (StoreCredit >= total)
-	{
-		cout << "You have total of " << StoreCredit << " StoreCredit." << endl;
-		cout << "Your total of " << total << " has been deducted from your " << StoreCredit << " StoreCredit" << endl;
-		StoreCredit -= total;
-		cout << "You have total of " << StoreCredit << " StoreCredit left." << endl;
-	}
+    outfile.open(filename, std::ios_base::app);
 
-}//checks out, item gets annihilated, money gets stolen
+    while(temp != nullptr)
+    {
+        outfile << "Item name: " << temp->game.name << std::endl;
+        outfile << "Quantity bought" << temp->quantity << std::endl;
+        outfile << "Total Price: " << temp->quantity*temp->price << std::endl;
+        total += temp->quantity*temp->price;
+    }
+    cout << "Your total is " << total << endl;
+    if (user.storeToken >= total)
+    {
+        cout << "You have total of " << user.storeToken << " StoreCredit." << endl;
+        cout << "Your total of " << total << " has been deducted from your " << user.storeToken << " StoreCredit" << endl;
+        user.storeToken -= total;
+        cout << "You have total of " << user.storeToken << " StoreCredit left." << endl;
+
+        Node *temp = head;
+        while(temp != nullptr)
+        {
+            head = head->next;
+            delete temp;
+            temp = head;
+        }
+
+        tail = nullptr;
+    }
+
+    else
+    {
+        cout << "You don't have enough money." << endl;
+    }
+
+}
 
 void Cart::addItem(Inventory inventory, string& item, int quantity)
 {
-	//inventory.checkAvailable(item);
-	Tokenizer tkn;
-	string a1, b1, c1;
-	ifstream file2;
-	string line1;
-	string line2;
-	file2.open(username + ".txt");
-	if (file2.is_open())
-	{
-		getline(file2, line1);
-		if (line1 == "")
-		{
-			ofstream file1(username + ".txt", std::ios_base::app | std::ios_base::out);
-			if (file1.is_open())
-			{
-				file1 << cartID;
-				file1 << " ";
-				file1 << item + " ";
-				file1 << quantity;
-				file1 << "\n";
-				cout << "new item added" << endl;
-				file1.close();
-			}
-		}
-		else
-		{
-			file2.clear();
-			file2.seekg(0);
-			while (getline(file2, line2))
-			{
-				tkn.setString(line2);
-				tkn.readWord(a1);
-				tkn.readWord(b1);
-				tkn.readWord(c1);
-				if (b1 == item)
-				{
-					ofstream file1("dummy.txt", std::ios_base::app | std::ios_base::out);
-					if (file1.is_open())
-					{
-							int num = stoi(c1);
-							num += quantity;
-							file1 << cartID;
-							file1 << " ";
-							file1 << item + " ";
-							file1 << num;
-							file1 << "\n";
-							cout << "previous item updated" << endl;
-							file1.close();
+    //this code chunk creates the game object
+    Game addgame;
+    //filename
+    string filename = "";
 
-							string line2;
-							ifstream file1("dummy.txt");
-							ofstream file2(username + ".txt");
+    //creates the game using fileGame
+    addgame.fileGame(item + ".txt");
 
-							getline(file1, line2);
-							file2 << line2;
+    //creates new node with the inserted character as data
+    Node *cartitem = new Node;
+    cartitem->game = addgame;
 
-							file1.close();
+    //sets temp equal to head
+    Node *temp = head;
 
-							ofstream test("dummy.txt", std::ios_base::out | std::ios_base::trunc);
-							test.close();
+    //if head is empty, sets head to added Character, next and prev to null, and tail equal to head
+    if(head == nullptr)
+    {
+        head = cartitem;
+        head->next = nullptr;
+        head->prev = nullptr;
+        tail = head;
+        head->quantity += quantity;
 
-							inventory.removeItem(item, quantity);
-					}
-				}
-				else
-				{
-					ofstream file1(username + ".txt", std::ios_base::app | std::ios_base::out);
-					if (file1.is_open())
-					{
-						file1 << "\n";
-						file1 << cartID;
-						file1 << " ";
-						file1 << item + " ";
-						file1 << quantity;
-						file1 << "\n";
-						cout << "new item added" << endl;
-						file1.close();
-					}
-				}
-			}	
-		}
-	}
+        //sets price
+        if(cartitem->game.developer == "Ubisoft")
+        {
+            head->price = 50;
+        }
+
+        else if(cartitem->game.developer == "Activision")
+        {
+            head->price = 60;
+        }
+
+        else if(cartitem->game.developer == "Bungie")
+        {
+            head->price = 25;
+        }
+
+        else if(cartitem->game.developer == "Nintendo")
+        {
+            head->price = 35;
+        }
+
+        else if(cartitem->game.developer == "Square Enix")
+        {
+            head->price = 40;
+        }
+
+        else if(cartitem->game.developer == "Capcom")
+        {
+            head->price = 55;
+        }
+
+        else if(cartitem->game.developer == "Fromsoftware")
+        {
+            head->price = 60;
+        }
+
+        else if(cartitem->game.developer == "Sony")
+        {
+            head->price = 60;
+        }
+
+        //static price of 25 for "unknown" developers
+        else
+        {
+            head->price = 25;
+        }
+        return;
+    }
+
+
+    //loops while temp isn't null
+    while(temp != nullptr)
+    {
+        //sets Game class insert and current equal to addedCharacter and temp
+        Game insert = cartitem->game;
+        Game current = temp->game;
+
+        //if the added item is earlier in the alphabet than temp
+        if(insert.name < current.name)
+        {
+            //if temp is at the head
+            if(temp == head)
+            {
+                //increments quantity
+                cartitem->quantity += quantity;
+                //sets the added item as the head of the list and ends the function
+                cartitem->next = head;
+                cartitem->prev = nullptr;
+                head->prev = cartitem;
+                head = cartitem;
+                break;
+            }
+
+
+            //if temp is anything within the list
+            else
+            {
+                cartitem->quantity += 1;
+                //puts the added item between temp and temp's previous node and ends the function
+                temp->prev->next = cartitem;
+                cartitem->prev = temp->prev;
+                temp->prev = cartitem;
+
+                //if the next node isn't null
+                if(cartitem->next != nullptr)
+                {
+                    cartitem->next = temp;
+                    break;
+                }
+            }
+        }
+
+        //if the game is already in the list
+        if(insert.name == current.name)
+        {
+           temp->quantity += quantity;
+           delete cartitem;
+           break;
+        }
+
+        //if the inserted item is bigger than temp, and if temp is at the tail/end
+        else
+        {
+            //sets the added item as the tail of the list and ends the function
+            if(temp == tail)
+            {
+                cartitem->quantity += quantity;
+                tail->next = cartitem;
+                cartitem->next = nullptr;
+                cartitem->prev = tail;
+                tail = cartitem;
+                break;
+            }
+        }
+        //goes to the next node
+        temp = temp->next;
+    }
+
+    //sets price
+    if(cartitem->game.developer == "Ubisoft")
+    {
+        cartitem->price = 50;
+    }
+
+    else if(cartitem->game.developer == "Activision")
+    {
+        cartitem->price = 60;
+    }
+
+    else if(cartitem->game.developer == "Bungie")
+    {
+        cartitem->price = 25;
+    }
+
+    else if(cartitem->game.developer == "Nintendo")
+    {
+        cartitem->price = 35;
+    }
+
+    else if(cartitem->game.developer == "Square Enix")
+    {
+        cartitem->price = 40;
+    }
+
+    else if(cartitem->game.developer == "Capcom")
+    {
+        cartitem->price = 55;
+    }
+
+    else if(cartitem->game.developer == "Fromsoftware")
+    {
+        cartitem->price = 60;
+    }
+
+    else if(cartitem->game.developer == "Sony")
+    {
+        cartitem->price = 60;
+    }
+
+    //static price of 25 for "unknown" developers
+    else
+    {
+        cartitem->price = 25;
+    }
+
+    inventory.removeItem(item, quantity);
+    inventory.save();
 }
 
 void Cart::removeItem(Inventory inventory, string& item, int quantity)
 {
-	Tokenizer tkn;
-	ifstream file1;
-	string line1;
-	string line2;
-	string a1, b1, c1;
-	file1.open(username + ".txt", std::ios_base::app || std::ios_base::out);
-	if (file1.is_open())
-	{
-		getline(file1, line1);
-		if (line1 == "")
-		{
-			cout << "The cart is empty. There is no item to remove in the cart." << endl;
-		}
-		else
-		{
-			file1.clear();
-			file1.seekg(0);
-			while (getline(file1, line2))
-			{
-				tkn.setString(line2);
-				tkn.readWord(a1);
-				tkn.readWord(b1);
-				tkn.readWord(c1);
-				if (b1 != item)
-				{
-					ofstream file1("dummy.txt", std::ios_base::app | std::ios_base::out);
-					if (file1.is_open())
-					{
-						file1 << a1 + " ";
-						file1 << b1 + " ";
-						file1 << c1 + "\n";
-					}
-				}
-				else if (b1 == item)
-				{
-					int num = stoi(c1);
-					if (num >= quantity && quantity > 0)
-					{
-						num -= quantity;
-					}
-					else
-					{
-						num = 0;
-					}
+    //starts at head
+    Node *temp = head;
 
-					ofstream file2("dummy.txt", std::ios_base::app | std::ios_base::out);
-					if (file2.is_open())
-					{
-						file2 << cartID;
-						file2 << " ";
-						file2 << item + " ";
-						file2 << num;
-						file2 << "\n";
-						cout << quantity + " item deleted." << num << " number of said item is left in the cart" << endl;
-						file2.close();
-					}
-				}
-			}
-		}
-		string line3;
-		ifstream file2("dummy.txt");
-		ofstream file1(username + ".txt");
+    int flag = 0;
 
-		while (getline(file2, line3))
-		{
-			file1 << line3;
-			file1 << "\n";
-		}
+    //if list is empty tells the user
+    if(head == nullptr)
+    {
+        std::cout << "The cart is empty." << std::endl;
+    }
 
-		file1.close();
+    //while temp isn't null loops until the item is found
+    while(temp != nullptr)
+    {
+        if(temp->game.name == item)
+        {
+            if(temp->quantity > 0)
+            {
+                if((temp->quantity - quantity) < 0)
+                {
+                    std::cout << "You don't have that much of that item in your cart!" << std::endl;
+                    std::cout << "Instead you got: " << temp->quantity << std::endl;
+                    temp->quantity = 0;
+                    flag += 1;
+                }
+                else
+                {
+                    temp->quantity = temp->quantity - quantity;
+                    flag += 1;
+                }
+            }
+        }
+        temp = temp->next;
+    }
 
-		ofstream test("dummy.txt", std::ios_base::out | std::ios_base::trunc);
-		test.close();
+    if(flag == 0)
+    {
+        std::cout << "That item is not in your cart." << std::endl;
+        return;
+    }
 
-		inventory.addItem(item, quantity);
-	}
+    inventory.addItem(item, quantity);
+    inventory.save();
 }
 //removes item from cart
 
 void Cart::displayCart() ///
 {
-	Tokenizer tkn;
-	string name, cartid, itemid, quantit;
-	ifstream cartfile;
-	cartfile.open(username + ".txt");
-	if (cartfile.is_open())
-	{
-		std::cout << "---Currently whats in the cart: ---" << endl;
-		string line;
-		while (getline(cartfile, line))
-		{
-			tkn.setString(line);
-			tkn.readWord(cartid);
-			tkn.readWord(itemid);
-			tkn.readWord(quantit);
-			cout << "CartID: " << cartid << "		";
-			cout << "Item: " << itemid << "		";
-			cout << "Quantity: " << quantit << endl;
+    Node *temp = head;
+    if(head == nullptr)
+    {
+        std::cout << "Cart is empty." << std::endl;
+    }
 
-		}
-	}
-}//displays cart contents
+    while(temp != nullptr)
+    {
+
+
+        //if the item is gone
+        if(temp->quantity == 0)
+        {
+        }
+        else
+        {
+            //displays information
+            temp->game.display();
+            std::cout << std::endl;
+            std::cout << "Quantity left: " << temp->quantity << std::endl;
+            std::cout << "Price: " << temp->price << std::endl << std::endl;
+
+        }
+        temp = temp->next;
+    }
+}
+
+//displays cart contents
+void Cart::save()
+{
+    //writes to outfile
+    ofstream outfile;
+    outfile.open(this->username + ".txt");
+    string name, amount;
+
+    //sets temp equal to head
+    Node *temp = head;
+
+    //if inventory hasn't been made, output that it's empty
+    if(head == nullptr)
+    {
+        std::cout << "Inventory is empty." << std::endl;
+        return;
+    }
+
+    //loops and writes the game name and quantity into inventory.txt
+    while(temp != nullptr)
+    {
+        outfile << temp->game.name << std::endl;
+        outfile << temp->quantity << std::endl;
+        temp = temp->next;
+    }
+}
