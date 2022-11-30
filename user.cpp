@@ -62,6 +62,7 @@ void User::updateinfo() //updates information
         std::cout << "Exit" << std::endl;
 
         //takes user input
+        std::cin.ignore();
         std::getline(std::cin,answer);
 
         //changes username
@@ -372,7 +373,7 @@ void User::display()
 }
 
 //checks if the user is an admin, returns true if they are, false if they aren't
-bool User::checkAdmin()
+bool User::isAdmin()
 {
     if(this->admin == true)
     {
