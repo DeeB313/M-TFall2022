@@ -31,7 +31,7 @@ bool Inventory::checkAvailable(string &item) //Checks if an item is available in
     //if list is empty tells the user
     if(head == nullptr)
     {
-        std::cout << "The inventory is empty." << std::endl;
+        return false;
     }
 
     //while temp isn't null loops and checks if there is 1 or more of an item left
@@ -266,7 +266,7 @@ void Inventory::removeItem(string &item, int &amount) //Removes item from the in
     //if list is empty tells the user
     if(head == nullptr)
     {
-        std::cout << "The inventory is empty." << std::endl;
+        return;
     }
 
     //while temp isn't null loops until the item is found
@@ -308,7 +308,6 @@ void Inventory::display(Inventory &inventory)//Displays all the items in the inv
     //if list is empty tells the user
     if(head == nullptr)
     {
-        std::cout << "Inventory is empty." << std::endl;
         return;
     }
 
@@ -346,7 +345,6 @@ void Inventory::save()
     //if inventory hasn't been made, output that it's empty
     if(head == nullptr)
     {
-        std::cout << "Inventory is empty." << std::endl;
         return;
     }
 
