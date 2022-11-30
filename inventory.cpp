@@ -8,7 +8,6 @@ Inventory::Inventory()
 {
     head = nullptr;
     tail = nullptr;
-
 }
 
 Inventory::~Inventory()
@@ -25,7 +24,7 @@ Inventory::~Inventory()
     tail = nullptr;
 }
 
-void Inventory::checkAvailable(string &item) //Checks if an item is available in the inventory(if there is more than one item of that name)
+bool Inventory::checkAvailable(string &item) //Checks if an item is available in the inventory(if there is more than one item of that name)
 {
     Node *temp = head;
 
@@ -47,10 +46,12 @@ void Inventory::checkAvailable(string &item) //Checks if an item is available in
                 if(temp->quantity == 1)
                 {
                     std::cout << "There is " << temp->quantity << " remaining." << std::endl;
+                    return true;
                 }
                 else
                 {
                     std::cout << "There are " << temp->quantity << " remaining." << std::endl;
+                    return true;
                 }
             }
         }
@@ -60,6 +61,7 @@ void Inventory::checkAvailable(string &item) //Checks if an item is available in
 
     //if item wasn't found or if the quantity was 0, return false
     std::cout << "This item is not available." << std::endl;
+    return false;
 }
 
 void Inventory::addItem(string &name, int &amount) //Adds an item to the inventory
@@ -255,11 +257,12 @@ void Inventory::addItem(string &name, int &amount) //Adds an item to the invento
     }
 }
 
-bool Inventory::removeItem(string &item, int &amount) //Removes item from the inventory, doesn't actually erase it, just decrements the quantity
+void Inventory::removeItem(string &item, int &amount) //Removes item from the inventory, doesn't actually erase it, just decrements the quantity
 {
     //starts at head
     Node *temp = head;
 
+    int flag = 0;
     //if list is empty tells the user
     if(head == nullptr)
     {
@@ -278,17 +281,23 @@ bool Inventory::removeItem(string &item, int &amount) //Removes item from the in
                     std::cout << "You can't buy that much!" << std::endl;
                     std::cout << "Instead you got: " << temp->quantity << std::endl;
                     temp->quantity = 0;
+                    flag += 1;
                 }
                 else
                 {
                     temp->quantity = temp->quantity - amount;
+                    flag += 1;
                 }
-                return true;
             }
         }
         temp = temp->next;
     }
-    return false;
+
+    if(flag == 0)
+    {
+        std::cout << "That item is not in the inventory." << std::endl;
+        return;
+    }
 }
 
 void Inventory::display(Inventory &inventory)//Displays all the items in the inventory
