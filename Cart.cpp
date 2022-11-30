@@ -4,6 +4,7 @@
 #include "game.h"
 #include "Tokenizer.h"
 #include <iostream>
+#include <stdio.h>
 using std::istream;
 using std::stringstream;
 using std::string;
@@ -85,10 +86,15 @@ void Cart::login(User* user) ///
 void Cart::logout() ///
 {
 	string confirm;
-
+	cout << endl;
+	cout << "You are about to log out of the store." << endl;
+	cout << "Your cart history will be deleted after you log out." << endl;
+	cout << "Type confirm to log out" << endl;
 	cin >> confirm;
 	if (confirm == "confirm")
 	{
+		string filename = username + ".txt";
+		remove(filename.c_str());
 		this->username = "";
 		this->password = "";
 		cout << "You are logged out." << endl;
@@ -97,7 +103,56 @@ void Cart::logout() ///
 
 void Cart::checkout(User* user, Cart* cart)
 {
-	logout();
+	int total = 0;
+	string game1 = "Mario";
+	string game2 = "Sekiro";
+	string game3 = "Sonic";
+	Inventory inv;
+	Tokenizer tkn;
+	ifstream file1;
+	string line1;
+	string cartid, name, quantity;
+	file1.open(username + ".txt");
+	if (file1.is_open())
+	{
+		displayCart();
+		while (getline(file1, line1))
+		{
+			tkn.setString(line1);
+			tkn.readWord(cartid);
+			tkn.readWord(name);
+			tkn.readWord(quantity);
+			if (name == "Mario")
+			{
+				int quan = stoi(quantity);
+				total += quan * 3;
+				removeItem(inv, game1, quan);
+			}
+			else if (name == "Sekiro")
+			{
+				int quan = stoi(quantity);
+				total += quan * 5;
+				removeItem(inv, game2, quan);
+
+			}
+			else if (name == "Sonic")
+			{
+				int quan = stoi(quantity);
+				total += quan * 9;
+				removeItem(inv, game3, quan);
+			}
+		}
+	}
+	cout << "Your total is " << total << endl;
+	int StoreCredit = user->storeToken;
+	if (StoreCredit >= total)
+	{
+		cout << "You have total of " << StoreCredit << " StoreCredit." << endl;
+		cout << "Your total of " << total << " has been deducted from your " << StoreCredit << " StoreCredit" << endl;
+		StoreCredit -= total;
+		cout << "You have total of " << StoreCredit << " StoreCredit left." << endl;
+	}
+
 }//checks out, item gets annihilated, money gets stolen
 
 void Cart::addItem(Inventory inventory, string& item, int quantity)
