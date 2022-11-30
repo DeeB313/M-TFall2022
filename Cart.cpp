@@ -95,9 +95,8 @@ void Cart::logout() ///
 	}
 }//logs out of current user
 
-void Cart::checkout(Cart& cart)
+void Cart::checkout(User* user, Cart* cart)
 {
-
 	logout();
 }//checks out, item gets annihilated, money gets stolen
 
@@ -106,9 +105,7 @@ void Cart::addItem(Inventory inventory, string& item, int quantity)
 	//inventory.checkAvailable(item);
 	Tokenizer tkn;
 	string a1, b1, c1;
-	Game game;
 	ifstream file2;
-	string cartname = "dummy.txt";
 	string line1;
 	string line2;
 	file2.open(username + ".txt");
@@ -120,7 +117,6 @@ void Cart::addItem(Inventory inventory, string& item, int quantity)
 			ofstream file1(username + ".txt", std::ios_base::app | std::ios_base::out);
 			if (file1.is_open())
 			{
-				file1 << "\b";
 				file1 << cartID;
 				file1 << " ";
 				file1 << item + " ";
@@ -167,7 +163,7 @@ void Cart::addItem(Inventory inventory, string& item, int quantity)
 							ofstream test("dummy.txt", std::ios_base::out | std::ios_base::trunc);
 							test.close();
 
-							inventory.removeItem(item, num);
+							inventory.removeItem(item, quantity);
 					}
 				}
 				else
@@ -190,26 +186,86 @@ void Cart::addItem(Inventory inventory, string& item, int quantity)
 	}
 }
 
-void Cart::removeItem(Inventory inventory, Node* item, int quantity)
+void Cart::removeItem(Inventory inventory, string& item, int quantity)
 {
-	string deleteline;
-	string line;
-	ifstream fin;
-	fin.open("cart.txt");
-	ofstream tmp;
-	tmp.open("tmp.txt");
-	cout << "What item would you like to remove?" << endl;
-	cin >> deleteline;
-
-	while (getline(fin, line))
+	Tokenizer tkn;
+	ifstream file1;
+	string line1;
+	string line2;
+	string a1, b1, c1;
+	file1.open(username + ".txt", std::ios_base::app || std::ios_base::out);
+	if (file1.is_open())
 	{
-		line.replace(line.find(deleteline), deleteline.length(), " ");
-		tmp << line << endl;
-	}
+		getline(file1, line1);
+		if (line1 == "")
+		{
+			cout << "The cart is empty. There is no item to remove in the cart." << endl;
+		}
+		else
+		{
+			file1.clear();
+			file1.seekg(0);
+			while (getline(file1, line2))
+			{
+				tkn.setString(line2);
+				tkn.readWord(a1);
+				tkn.readWord(b1);
+				tkn.readWord(c1);
+				if (b1 != item)
+				{
+					ofstream file1("dummy.txt", std::ios_base::app | std::ios_base::out);
+					if (file1.is_open())
+					{
+						file1 << a1 + " ";
+						file1 << b1 + " ";
+						file1 << c1 + "\n";
+					}
+				}
+				else if (b1 == item)
+				{
+					int num = stoi(c1);
+					if (num >= quantity && quantity > 0)
+					{
+						num -= quantity;
+					}
+					else
+					{
+						num = 0;
+					}
 
-	tmp.close();
-	fin.close();
-}//removes item from cart
+					ofstream file2("dummy.txt", std::ios_base::app | std::ios_base::out);
+					if (file2.is_open())
+					{
+						file2 << cartID;
+						file2 << " ";
+						file2 << item + " ";
+						file2 << num;
+						file2 << "\n";
+						cout << quantity + " item deleted." << num << " number of said item is left in the cart" << endl;
+						file2.close();
+					}
+				}
+			}
+		}
+		string line3;
+		ifstream file2("dummy.txt");
+		ofstream file1(username + ".txt");
+
+		while (getline(file2, line3))
+		{
+			file1 << line3;
+			file1 << "\n";
+		}
+
+		file1.close();
+
+		ofstream test("dummy.txt", std::ios_base::out | std::ios_base::trunc);
+		test.close();
+
+		inventory.addItem(item, quantity);
+	}
+}
+//removes item from cart
 
 void Cart::displayCart() ///
 {
