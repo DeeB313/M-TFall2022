@@ -100,7 +100,6 @@ void Cart::login(User &user, Cart &cart, Inventory &inventory)
     //runs if the inventory file opens
     if(flag == 1)
     {
-        cout << "Hello";
         while(getline(infile, name), getline(infile, tempquant))
         {
             //converts the string input into an int
@@ -312,7 +311,7 @@ void Cart::logout() ///
     tail = nullptr;
 }//logs out of current user
 
-void Cart::checkout(User &user, Cart &cart, Inventory inventory)
+void Cart::checkout(User &user, Cart &cart)
 {
     ofstream outfile;
     string filename = user.username + "history.txt";
@@ -354,11 +353,9 @@ void Cart::checkout(User &user, Cart &cart, Inventory inventory)
     {
         cout << "You don't have enough money." << endl;
     }
-
-    cout << "We made it!!!" << endl;
 }
 
-void Cart::addItem(Inventory inventory, string& item, int quantity)
+void Cart::addItem(string& item, int quantity)
 {
     //this code chunk creates the game object
     Game addgame;
@@ -430,8 +427,6 @@ void Cart::addItem(Inventory inventory, string& item, int quantity)
         {
             head->price = 25;
         }
-        inventory.removeItem(item, quantity);
-        inventory.save();
         return;
     }
 
@@ -550,12 +545,9 @@ void Cart::addItem(Inventory inventory, string& item, int quantity)
     {
         cartitem->price = 25;
     }
-
-    inventory.removeItem(item, quantity);
-    inventory.save();
 }
 
-void Cart::removeItem(Inventory inventory, string& item, int quantity)
+void Cart::removeItem(string& item, int quantity)
 {
     //starts at head
     Node *temp = head;
@@ -578,7 +570,8 @@ void Cart::removeItem(Inventory inventory, string& item, int quantity)
                 if((temp->quantity - quantity) < 0)
                 {
                     std::cout << "You don't have that much of that item in your cart!" << std::endl;
-                    std::cout << "Instead you got: " << temp->quantity << std::endl;
+                    std::cout << "Instead you have: " << temp->quantity << std::endl;
+                    std::cout << temp->quantity << " item removed." << std::endl;
                     temp->quantity = 0;
                     flag += 1;
                 }
@@ -597,9 +590,6 @@ void Cart::removeItem(Inventory inventory, string& item, int quantity)
         std::cout << "That item is not in your cart." << std::endl;
         return;
     }
-
-    inventory.addItem(item, quantity);
-    inventory.save();
 }
 //removes item from cart
 
@@ -628,7 +618,6 @@ void Cart::save()
     //writes to outfile
     ofstream outfile;
     outfile.open(this->username + ".txt");
-    string name, amount;
 
     //sets temp equal to head
     Node *temp = head;
@@ -636,14 +625,18 @@ void Cart::save()
     //if inventory hasn't been made, output that it's empty
     if(head == nullptr)
     {
+        outfile.close();
         return;
     }
 
     //loops and writes the game name and quantity into inventory.txt
     while(temp != nullptr)
     {
-        outfile << temp->game.name << std::endl;
-        outfile << temp->quantity << std::endl;
+        if(temp->quantity != 0)
+        {
+            outfile << temp->game.name << std::endl;
+            outfile << temp->quantity << std::endl;
+        }
         temp = temp->next;
     }
     outfile.close();
