@@ -8,7 +8,7 @@
 
 using namespace std;
 
-//work in progress, but the idea is to load files in the beginning using load, and save whenever we change anything using save
+//save and load
 void loadData(vector<User>& users, Inventory& inventory, vector<Game>& games); //, vector <Cart> carts, Inventory inventory
 void saveData(vector<User>& users, Inventory& inventory, Cart& cart);
 
@@ -50,7 +50,7 @@ int main()
         //if logged in
         if (loginFlag > 0)
         {
-            while (1)
+            while (loginFlag > 0)
             {
                 //menu
                 cout << "1. View Inventory" << endl;
@@ -142,6 +142,7 @@ int main()
                             cout << "How much?" << endl;
                             cin >> amount;
                             inventory.removeItem(item, amount);
+                            saveData(users, inventory, cart);
                         }
 
                         //exits
@@ -182,8 +183,7 @@ int main()
 
                         else if (choice == "checkout" || choice == "2")
                         {
-                            cart.checkout(user, cart, inventory);
-                            cout << "Make here?" << endl;
+                            cart.checkout(user, cart);
                             saveData(users, inventory, cart);
                         }
 
@@ -241,8 +241,8 @@ int main()
                             }
                             cout << "How many of this item?" << endl;
                             cin >> quantity;
-                            cart.addItem(inventory, item, quantity);
-                            cart.save();
+                            cart.addItem(item, quantity);
+                            inventory.removeItem(item, quantity);
                         }
 
                         else if (choice == "remove" || choice == "5")
@@ -255,7 +255,8 @@ int main()
                             getline(cin, item);
                             cout << "How many of this item?" << endl;
                             cin >> quantity;
-                            cart.removeItem(inventory, item, quantity);
+                            cart.removeItem(item, quantity);
+                            inventory.addItem(item, quantity);
                         }
 
                         else if (choice == "return" || choice == "6")
@@ -301,22 +302,19 @@ int main()
                                 if(user.username == users[i].username)
                                 {
                                     users.erase(users.begin()+ i);
-
-                                    //opens the user files in write mode then closes them, effectively deleting them
-                                    ofstream outfile;
-                                    outfile.open(user.username + "txt");
-                                    outfile.close();
-                                    outfile.open(user.username + "history.txt");
-                                    outfile.close();
-
                                     saveData(users, inventory, cart);
-
                                 }
                             }
 
+                            User newuser;
+                            user = newuser;
                             string filename = user.username + ".txt";
                             remove(filename.c_str());
+                            string historyname = user.username + "history.txt";
+                            remove(historyname.c_str());
                             cout << "Account deleted..." << endl;
+                            loginFlag = 0;
+                            break;
                         }
 
                         //exit
@@ -420,7 +418,6 @@ int main()
                 //exit
                 else if (choice == "logout" || choice == "4")
                 {
-                    cout << "hello";
                     User newuser;
                     saveData(users, inventory, cart);
                     cart.logout();
@@ -512,11 +509,12 @@ int main()
 
                     //sets the current user as the last user in the vector(most recent user)
                     user = users.back();
-                    cout << user.username << " has logged in." << endl;
+
+                    cout << "Please log in with the account you just made." << endl;
 
                     //saves data to file
                     saveData(users, inventory, cart);
-
+                    cart.login(user, cart, inventory);
                     //updates loginFlag and goes to log in menu
                     loginFlag += 1;
                     break;
@@ -611,10 +609,11 @@ void loadData(vector<User>& users, Inventory& inventory, vector<Game>& games)
             //adds item into inventory
             inventory.addItem(name, quantity);
         }
+
+        //closes the file
+        infile.close();
     }
 
-    //closes the file
-    infile.close();
 
     //Sets games
     string filename, none;
@@ -645,10 +644,10 @@ void loadData(vector<User>& users, Inventory& inventory, vector<Game>& games)
             temp.fileGame(filename);
             games.push_back(temp);
         }
-    }
 
-    //closes the file
-    infile.close();
+        //closes the file
+        infile.close();
+    }
 }
 
 //work in progress
