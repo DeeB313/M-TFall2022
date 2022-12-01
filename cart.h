@@ -26,11 +26,11 @@ public:
 
     void logout(); //logs out of current user
 
-    void checkout(User& user, Cart &cart, Inventory inventory); //checks out, item gets annihilated, money gets stolen
+    void checkout(User& user, Cart &cart); //checks out, item gets annihilated, money gets stolen
 
-    void addItem(Inventory inventory, string& item, int quantity); //adds item to cart
+    void addItem(string& item, int quantity); //adds item to cart
 
-    void removeItem(Inventory inventory, string& item, int quantity); //removes item from cart
+    void removeItem(string& item, int quantity); //removes item from cart
 
     void displayCart(); //displays cart contents
 
