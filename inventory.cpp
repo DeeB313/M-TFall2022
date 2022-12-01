@@ -345,6 +345,7 @@ void Inventory::save()
     //if inventory hasn't been made, output that it's empty
     if(head == nullptr)
     {
+        outfile.close();
         return;
     }
 
